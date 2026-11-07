@@ -117,7 +117,7 @@ public class Administrador extends Usuario {
     }
 
     public List<SesionEntrenamiento> consultarHistorialEntrenamiento() {
-        List<SesionEntrenamiento> resultado = new ArrayList<>();
+        List<SesionesEntrenamiento> resultado = new ArrayList<>();
         for (Empleado e : empleados) {
             if (e instanceof Entrenador) {
                 resultado.addAll(((Entrenador) e).getSesiones());
