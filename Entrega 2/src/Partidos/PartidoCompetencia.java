@@ -5,8 +5,6 @@ import DeporteConjunto.DeporteConjunto;
 import Competencias.Competencia;
 import Competencias.EquipoExterno;
 
-import java.util.Date;
-
 public class PartidoCompetencia extends Partido {
 	
 	// atributos 

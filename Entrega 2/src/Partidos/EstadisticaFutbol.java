@@ -12,7 +12,7 @@ public class EstadisticaFutbol extends EstadisticaPartido {
 	    
 	    // constructor
 	    public EstadisticaFutbol(Socio socio, int goles, int asistencias, int tarjetasAmarillas, boolean tarjetasRojas, Partido partido) {
-	        super(socio); 
+	        super(socio, partido);
 	        this.goles = goles;
 	        this.asistencias = asistencias;
 	        this.tarjetasAmarillas = tarjetasAmarillas;

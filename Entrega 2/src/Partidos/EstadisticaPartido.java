@@ -9,7 +9,7 @@ public abstract class EstadisticaPartido {
 	protected Partido partido;
 
 	//constructor
-    public EstadisticaPartido(Socio socio) {
+    public EstadisticaPartido(Socio socio, Partido partido) {
         this.socio = socio;
         this.partido = partido;
     }
