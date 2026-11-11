@@ -30,6 +30,7 @@ public class Socio extends Usuario {
    private final List<PuntajeRanking> rankings;
    private final List<Reserva> reservas;
    private final List<Partido> partidos;
+   private final List<PartidoPractica> partidosPractica;
 
    public Socio(String login, String contrasena, int edad) throws ClubException {
 	      super(login, contrasena);
@@ -44,6 +45,7 @@ public class Socio extends Usuario {
 	        this.rankings = new ArrayList<>();
 	        this.reservas = new ArrayList<>();
 	        this.partidos = new ArrayList<>();
+            this.partidosPractica = new ArrayList<>();
 	    }
 
    public boolean isFisicoApto() {
@@ -140,27 +142,35 @@ public class Socio extends Usuario {
     return null;
 }
 
-   public PartidoPractica programarPartidoParactica ( Socio rival, DisciplinaIndividual d) {
-	   return programarPartidoParactica (rival, d, LocalDate.now());
+    public List<PartidoPractica> getPartidosPractica() {
+       return partidosPractica;
    }
+
+   public PartidoPractica programarPartidoPractica(Socio rival, DisciplinaIndividual d, Instalacion i,
+           LocalDateTime inicio, LocalDateTime fin) throws ClubException {
+       if (d == null || !d.estaInscrito(this)) {
+           throw new ClubException("Primero debes inscribirte en la disciplina para programar una práctica.");
+       }
+       PartidoPractica partido = new PartidoPractica(d, this, rival, inicio.toLocalDate());
+       reservarInstalacion(i, inicio, fin, 2, "SENCILLOS");
+       partidosPractica.add(partido);
+       return partido;
+   }
+
    
-   public PartidoPractica programarPartidoParactica ( Socio rival, DisciplinaIndividual d, LocalDate fecha) {
-	   return new PartidoPractica(d, this, rival, fecha);
-   }
    public PuntajeRanking obtenerRanking (DisciplinaIndividual d) throws ClubException {
 	   for (PuntajeRanking r: rankings) {
 		   if (r.getdisciplina()==d) {
 			   return r;
 		   }
-	   
-       throw new ClubException("Aún no tienes puntaje  " + (d == null ? "esa disciplina" : d.getNombre())
+       }
+       throw new ClubException("Aún no tienes puntaje en  " + (d == null ? "esa disciplina" : d.getNombre())
                + ". Inscríbete.");
 	   }
 	   
-   }
    public List<EstadisticaPartido> consultarEstadisticasPorDeporte(DeporteConjunto deporte) throws ClubException {
        if (deporte == null) {
-           throw new ClubException("Elige el deporte del que quieres ver estadistica acumulada.");
+           throw new ClubException("Elige un deporte del que quieres ver estadistica acumulada.");
        }
        List<EstadisticaPartido> resultado = new ArrayList<>();
        for (Partido p : partidos) {
@@ -220,7 +230,11 @@ public class Socio extends Usuario {
    	}
    
    private DisciplinaIndividual buscarDisciplinaDe(Instalacion i) {
-	// TODO Auto-generated method stub
+	 for (InscripcionIndividual ins : inscripciones){
+        if (ins.getDisciplina().tieneInstalacion(i)) {
+               return ins.getDisciplina();
+           }
+       } 
 	return null;
 }
 

@@ -58,7 +58,7 @@ public abstract class Empleado extends Usuario{
 
 	public boolean estaDisponibleEn (DayOfWeek dia, LocalTime hora) {
 		for (Turno t : turnos) {
-			if (t == dia && t == hora) {
+			if (t.coincideCon(dia, hora)) {
 				return true;
 			}
 			return false;}}
