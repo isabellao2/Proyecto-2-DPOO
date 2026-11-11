@@ -44,8 +44,4 @@ public class PuntajeRanking {
         return disciplina;
     }
 
-	public DisciplinaIndividual getdisciplina() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

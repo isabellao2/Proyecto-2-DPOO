@@ -72,7 +72,7 @@ public class Entrenador extends Empleado {
         EstadisticaPartido e = p.getEstadistica(jugador);
         EstadisticaFutbol futbol;
         if (e == null) {
-            futbol = new EstadisticaFutbol(jugador);
+            futbol = new EstadisticaFutbol(jugador, 0, 0, 0, false, p);
             p.registrarEstadistica(futbol);
         } else {
             futbol = (EstadisticaFutbol) e;
