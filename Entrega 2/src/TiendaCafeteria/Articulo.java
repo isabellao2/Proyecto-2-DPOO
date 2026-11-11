@@ -5,6 +5,7 @@ public class Articulo {
     private String categoria;
     private double precio;
     private int cantidadDisponible;
+     private String ubicacion = "Principal";
 
     public Articulo(String nombre, String categoria, double precio, int cantidadDisponible) {
         this.nombre = nombre;
@@ -15,6 +16,24 @@ public class Articulo {
 
     public boolean estaAgotado() {
         return this.cantidadDisponible <= 0;
+    }
+
+    public void mover(String nuevaUbicacion) {
+        if (nuevaUbicacion == null || nuevaUbicacion.isBlank()) {
+            throw new IllegalArgumentException("Indica la nueva ubicación del artículo");
+        }
+        this.ubicacion = nuevaUbicacion.trim();
+    }
+
+    public void abastecer(int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad a abastecer debe ser mayor a cero");
+        }
+        this.cantidadDisponible += cantidad;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
     }
 
     public String getNombre() {

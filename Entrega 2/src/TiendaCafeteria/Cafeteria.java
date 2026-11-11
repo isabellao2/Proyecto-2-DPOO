@@ -25,11 +25,12 @@ public class Cafeteria {
     public Cafeteria() {
         this.bebidas = new ArrayList<>();
         this.snacks = new ArrayList<>();
+        this.ventas = new ArrayList<>();
     }
 
     //Metodos
     
-    public Venta vender(Socio comprador, List<Bebida> bebidas, List<Snack> snacks, double propina, List<Venta> ventas) {
+    public Venta vender(Socio comprador, List<Bebida> bebidas, List<Snack> snacks, double propina) {
         if (comprador == null)
             throw new IllegalArgumentException("El comprador es obligatorio");
         boolean sinBebidas = bebidas == null || bebidas.isEmpty();
