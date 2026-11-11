@@ -32,14 +32,14 @@ public class ComposicionEquipo {
         if (ultimo == null) {
             return false;
         }
-        EstadisticaPartido e = ultimo.getEstadistica(jugador);
+        EstadisticaPartido e = ultimo.obtenerEstadistica(jugador);
         return e instanceof EstadisticaFutbol && ((EstadisticaFutbol) e).generaSuspension();
     }
 
     public int contarAmarillas() {
         int total = 0;
         for (Partido p : equipo.getPartidosJugados()) {
-            EstadisticaPartido e = p.getEstadistica(jugador);
+            EstadisticaPartido e = p.obtenerEstadistica(jugador);
             if (e instanceof EstadisticaFutbol) {
                 total += ((EstadisticaFutbol) e).getTarjetasAmarillas();
             }
@@ -50,7 +50,7 @@ public class ComposicionEquipo {
     public int contarRojas() {
         int total = 0;
         for (Partido p : equipo.getPartidosJugados()) {
-            EstadisticaPartido e = p.getEstadistica(jugador);
+            EstadisticaPartido e = p.obtenerEstadistica(jugador);
             if (e instanceof EstadisticaFutbol && ((EstadisticaFutbol) e).isTarjetasRojas()) {
                 total++;
             }

@@ -73,6 +73,17 @@ public class DeporteConjunto {
 	    public String toString() {
 	        return nombre;
 	    }
+		public static String normalizar(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        return java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase().trim();
+    	}
+
+   		 public boolean esFutbol() {
+        return normalizar(nombre).equals("futbol");
+    	}
 	}
 
 

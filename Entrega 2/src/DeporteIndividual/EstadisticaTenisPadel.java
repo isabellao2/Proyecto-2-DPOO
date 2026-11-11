@@ -39,5 +39,5 @@ public class EstadisticaTenisPadel extends EstadisticaDisciplina{
     public void setErroresNoForzados(int erroresNoForzados) {
         this.erroresNoForzados = erroresNoForzados;
 
-    
+    }
 }

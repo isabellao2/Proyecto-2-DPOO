@@ -5,6 +5,11 @@ import java.util.List;
 import DeporteIndividual.Instalacion;
 import Entrenamiento.Asistencia;
 import Entrenamiento.SesionesEntrenamiento;
+import Partidos.Partido;
+import Partidos.EstadisticaPartido;
+import Partidos.EstadisticaFutbol;
+import Partidos.EstadisticaBaloncesto;
+
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -63,26 +68,29 @@ public class Entrenador extends Empleado {
         if (p == null || jugador == null) {
             throw new ClubException("Necesitamos el partido y el jugador para registrar la tarjeta.");
         }
-        if (!DeporteConjunto.FUTBOL.equalsIgnoreCase(p.getDeporte().getNombre())) {
-            throw new ClubException("Las tarjetas solo se registran en partidos de fútbol.");
+        if (!p.getDeporte().esFutbol()) {
+        throw new ClubException("Las tarjetas solo se registran en partidos de fútbol.");
         }
         if (tipo == null) {
             throw new ClubException("Indica si la tarjeta es AMARILLA o ROJA.");
         }
-        EstadisticaPartido e = p.getEstadistica(jugador);
+        EstadisticaPartido e = p.obtenerEstadistica(jugador);
         EstadisticaFutbol futbol;
         if (e == null) {
             futbol = new EstadisticaFutbol(jugador, 0, 0, 0, false, p);
-            p.registrarEstadistica(futbol);
-        } else {
+            p.agregarEstadistica(futbol);
+        } 
+        else {
             futbol = (EstadisticaFutbol) e;
         }
         String t = tipo.trim().toUpperCase();
         if (t.equals("AMARILLA")) {
             futbol.registrarAmarilla();
-        } else if (t.equals("ROJA")) {
+        } 
+        else if (t.equals("ROJA")) {
             futbol.registrarRoja();
-        } else {
+        } 
+        else {
             throw new ClubException("El tipo de tarjeta debe ser AMARILLA o ROJA.");
         }
     }

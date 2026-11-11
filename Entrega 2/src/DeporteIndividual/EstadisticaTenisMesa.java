@@ -16,6 +16,6 @@ public class EstadisticaTenisMesa extends EstadisticaDisciplina{
         return puntosTotales;
     }
     public void setPuntosTotales (int puntosTotales){
-        this.puntosTotales = puntosTotales
+        this.puntosTotales = puntosTotales;
     }
 }

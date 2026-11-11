@@ -34,6 +34,8 @@ public class PersistenciaTiendaCafeteria {
         cargarArticulos(tienda, carpeta);
         cargarBebidas(cafe, carpeta);
         cargarSnacks(cafe, carpeta);
+        seneca.setTienda(tienda);
+        seneca.setCafeteria(cafe);
         cargarVentas(seneca, carpeta);
 
     }
@@ -72,8 +74,10 @@ public class PersistenciaTiendaCafeteria {
                 String categoria = partes[1];
                 double precio = Double.parseDouble(partes[2]);
                 int cantidad = Integer.parseInt(partes[3]);
-                String ubicacion = partes[5];
                 Articulo nuevoArticulo = new Articulo(nombre, categoria, precio, cantidad);
+                if (partes.length > 4) {
+                    nuevoArticulo.mover(partes[4]);
+                }
                 tienda.agregarArticulo(nuevoArticulo);
             }
         }
@@ -110,7 +114,7 @@ public class PersistenciaTiendaCafeteria {
             }
         }
     private void cargarVentas(Club seneca, String carpeta) throws IOException, PersistenciaException{
-        String ruta = carpeta +"/" + ARCHIVO_SNACKS;
+        String ruta = carpeta +"/" + ARCHIVO_VENTAS;
         try (BufferedReader reader = new BufferedReader(new FileReader(ruta))){
             String linea;
             while ((linea = reader.readLine()) != null){
@@ -120,7 +124,7 @@ public class PersistenciaTiendaCafeteria {
                 String[] partes = linea.split(SEPARADOR);
                 String loginComprador = partes[0];
                 String rubro = partes[1];
-                LocalDate fecha = LocalDate.parse(partes[2]);
+                LocalDate fecha = LocalDate.parse(partes[2].trim().substring(0, 10));
                 double valor = Double.parseDouble(partes[3]);
                 double impuesto = Double.parseDouble(partes[4]);
                 double propina = Double.parseDouble(partes[5]);
@@ -162,7 +166,7 @@ public class PersistenciaTiendaCafeteria {
         String ruta = carpeta + "/" + ARCHIVO_ARTICULOS;
         try(PrintWriter escritor = new PrintWriter(new FileWriter(ruta))){ 
             for (Articulo a : tienda.getArticulosDisponibles()){
-                String linea = a.getNombre() + SEPARADOR + a.getCategoria() + SEPARADOR + a.getPrecio() + SEPARADOR + a.getCantidadDisponible() + SEPARADOR + "Tienda Central";
+                String linea = a.getNombre() + SEPARADOR + a.getCategoria() + SEPARADOR + a.getPrecio() + SEPARADOR + a.getCantidadDisponible() + SEPARADOR + a.getUbicacion();
                 escritor.println(linea);
             }
         }
@@ -194,7 +198,9 @@ public class PersistenciaTiendaCafeteria {
         String ruta = carpeta + "/" + ARCHIVO_VENTAS;
         try(PrintWriter escritor = new PrintWriter(new FileWriter(ruta))){ 
             for (Venta v : seneca.getVentas()){
-                String linea = v.getComprador().getLogin() + SEPARADOR+ v.getFecha() + SEPARADOR + v.getValor() + SEPARADOR + v.getImpuesto() + SEPARADOR + v.getPropina() + v.getDescuento() + SEPARADOR + "0" + "0";
+                String linea = v.getComprador().getLogin() + SEPARADOR + v.getRubro() + SEPARADOR + v.getFecha()
+                        + SEPARADOR + v.getValor() + SEPARADOR + v.getImpuesto() + SEPARADOR + v.getPropina()
+                        + SEPARADOR + v.getDescuento() + SEPARADOR + "0" + SEPARADOR + "0.0";
                 escritor.println(linea);
             }
         }

@@ -59,7 +59,7 @@ public class Cafeteria {
 
         Venta venta = new Venta(LocalDate.now(), "CAFETERIA", subtotal, 0.0, impuesto, propina, comprador);
 
-        if (hayCaliente) comprador.recibirBebidaCaliente(); // revisar como solucionar
+        if (hayCaliente) comprador.setBebidaCalienteActiva(true); // revisar como solucionar
         comprador.registrarCompra(venta);   
         ventas.add(venta); 
         return venta;

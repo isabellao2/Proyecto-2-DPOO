@@ -147,7 +147,7 @@ public class PruebaCambioTurno {
                         try {
                             administrador.gestionarCambioTurno(
                                     empleado, turnoActual, aprobar,
-                                    datos.listaEmpleados());
+                                    datos.getEmpleados());
 
                             System.out.println(aprobar
                                     ? "Cambio aprobado."
@@ -168,11 +168,11 @@ public class PruebaCambioTurno {
             }
 
             System.out.println("\nTurnos finales:");
-            for (Empleado e : datos.empleados.values()) {
+            for (Empleado e : datos.getEmpleados()) {
                 System.out.println(e.getLogin() + ": " + e.getTurnos());
             }
 
-            persistencia.guardar(datos);
+            persistencia.guardarTodo(datos,ruta);
             System.out.println("Cambios guardados correctamente.");
 
         } catch (Exception e) {

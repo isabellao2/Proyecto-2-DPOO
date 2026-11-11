@@ -112,7 +112,7 @@ public class Socio extends Usuario {
        if (partido == null) {
            throw new ClubException("Elige el partido del que quieres ver estadísticas");
        }
-       EstadisticaPartido estadistica = partido.getEstadistica(this);
+       EstadisticaPartido estadistica = partido.obtenerEstadistica(this);
        if (estadistica == null) {
            throw new ClubException("No encontramos estadísticas tuyas en ese partido");
        }
@@ -126,7 +126,7 @@ public class Socio extends Usuario {
            throw new ClubException("¡Ya estás inscrito en " + d.getNombre() + " No puedes inscribirte otra vez ");
        }
        InscripcionIndividual inscripcion = new InscripcionIndividual(this, d, nivel);
-       PuntajeRanking ranking = new PuntajeRanking(this, d, InscripcionIndividual.eloInicialPara(ins.getNivel()));
+       PuntajeRanking ranking = new PuntajeRanking(this, d, InscripcionIndividual.eloInicialPara(inscripcion.getNivel()));
        d.registrarInscripcion(inscripcion);
        inscripciones.add(inscripcion);
        rankings.add(ranking);
@@ -160,7 +160,7 @@ public class Socio extends Usuario {
    
    public PuntajeRanking obtenerRanking (DisciplinaIndividual d) throws ClubException {
 	   for (PuntajeRanking r: rankings) {
-		   if (r.getdisciplina()==d) {
+		   if (r.getDisciplina()==d) {
 			   return r;
 		   }
        }
@@ -175,7 +175,7 @@ public class Socio extends Usuario {
        List<EstadisticaPartido> resultado = new ArrayList<>();
        for (Partido p : partidos) {
            if (p.getDeporte().equals(deporte)) {
-               EstadisticaPartido e = p.getEstadistica(this);
+               EstadisticaPartido e = p.obtenerEstadistica(this);
                if (e != null) {
                    resultado.add(e);
                }

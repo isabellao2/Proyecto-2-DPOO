@@ -6,7 +6,7 @@ import Entrenamiento.Asistencia;
 import Entrenamiento.SesionesEntrenamiento;
 import Excepciones.ClubException;
 import club.Club;
-import Persistencia.PersistenciaCentral;
+import persistencias.PersistenciaCentral;
 import Usuarios.Entrenador;
 import Usuarios.Socio;
 import Usuarios.Usuario;
@@ -36,8 +36,8 @@ public class PruebaEntrenamiento {
             }
 
             Club datos = new Club ();
-            PersistenciaCentral persistencia = new Persistencia(ruta);
-            persistencia.cargar(datos, ruta);
+            PersistenciaCentral persistencia = new PersistenciaCentral();
+            persistencia.cargarTodos(datos, ruta);
 
             System.out.println("Datos cargados correctamente.");
 
@@ -72,14 +72,14 @@ public class PruebaEntrenamiento {
 
             System.out.println("\nINSTALACIONES DISPONIBLES");
 
-            for (String nombre : datos.instalaciones.keySet()) {
-                System.out.println("- " + nombre);
+            for (DeporteIndividual.Instalacion inst : datos.getInstalaciones()) {
+                System.out.println("- " + inst.getNombre());
             }
 
             System.out.println("\nEQUIPOS DISPONIBLES");
 
-            for (String nombre : datos.equipos.keySet()) {
-                System.out.println("- " + nombre);
+            for (Equipo eq : datos.getEquipos()) {
+                System.out.println("- " + eq.getNombre());
             }
 
             SesionesEntrenamiento sesion = null;
@@ -89,8 +89,8 @@ public class PruebaEntrenamiento {
                 System.out.print("\nNombre de la instalacion: ");
                 String nombreInstalacion = scanner.nextLine();
 
-                Instalacion instalacion = DatosClub.buscarPorNombre(
-                        datos.instalaciones, nombreInstalacion);
+                Instalacion instalacion =  datos.buscarInstalacion(nombreInstalacion);
+
 
                 if (instalacion == null) {
                     System.out.println("No encontramos esa instalacion.");
@@ -148,7 +148,7 @@ public class PruebaEntrenamiento {
                     String respuesta = scanner.nextLine();
 
                     if (!respuesta.equalsIgnoreCase("s")) {
-                        persistencia.guardar(datos);
+                        persistencia.guardaTodo(datos, ruta);
                         return;
                     }
                 }
@@ -161,8 +161,7 @@ public class PruebaEntrenamiento {
                 System.out.print("\nNombre del equipo: ");
                 String nombreEquipo = scanner.nextLine();
 
-                equipo = DatosClub.buscarPorNombre(
-                        datos.equipos, nombreEquipo);
+                equipo = datos.buscarEquipo(nombreEquipo);
 
                 if (equipo == null) {
                     System.out.println("No encontramos ese equipo.");
@@ -255,7 +254,7 @@ public class PruebaEntrenamiento {
 
                 System.out.println();
             }
-            persistencia.guardar(datos);
+            persistencia.guardarTodo(datos, ruta);
 
             System.out.println("\nCambios guardados correctamente.");
 

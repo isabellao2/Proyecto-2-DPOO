@@ -116,7 +116,7 @@ public class Administrador extends Usuario {
         return resultado;
     }
 
-    public List<SesionEntrenamiento> consultarHistorialEntrenamiento() {
+    public List<SesionesEntrenamiento> consultarHistorialEntrenamiento() {
         List<SesionesEntrenamiento> resultado = new ArrayList<>();
         for (Empleado e : empleados) {
             if (e instanceof Entrenador) {
