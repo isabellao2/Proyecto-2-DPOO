@@ -10,7 +10,7 @@ public class EstadisticaVoleibol extends EstadisticaPartido {
     
     // constructor 
     public EstadisticaVoleibol(Socio socio, int aces, int bloques, Partido partido) {
-        super(socio); 
+        super(socio, partido);
         this.aces = aces;
         this.bloques = bloques;
     }

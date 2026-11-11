@@ -9,7 +9,7 @@ public class EstadisticaBaloncesto extends EstadisticaPartido {
     private int rebotes;
 
     public EstadisticaBaloncesto(Socio socio, Partido partido, int puntos, int rebotes) {
-        super(socio); 
+        super(socio, partido);
         this.puntos = puntos;
         this.rebotes = rebotes;
     }
