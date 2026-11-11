@@ -5,8 +5,8 @@ import DeporteIndividual.Instalacion;
 import Entrenamiento.Asistencia;
 import Entrenamiento.SesionesEntrenamiento;
 import Excepciones.ClubException;
-import Persistencia.DatosClub;
-import Persistencia.Persistencia;
+import club.Club;
+import Persistencia.PersistenciaCentral;
 import Usuarios.Entrenador;
 import Usuarios.Socio;
 import Usuarios.Usuario;
@@ -25,7 +25,7 @@ public class PruebaEntrenamiento {
 
         try {
     
-            System.out.println("    SESION DE ENTRENAMIENTO");
+            System.out.println("    Sesion Entrenamiento   ");
   
 
             System.out.print("Enter para usar datos:");
@@ -35,8 +35,9 @@ public class PruebaEntrenamiento {
                 ruta = "datos";
             }
 
-            Persistencia persistencia = new Persistencia(ruta);
-            DatosClub datos = persistencia.cargar();
+            Club datos = new Club ();
+            PersistenciaCentral persistencia = new Persistencia(ruta);
+            persistencia.cargar(datos, ruta);
 
             System.out.println("Datos cargados correctamente.");
 
@@ -236,7 +237,7 @@ public class PruebaEntrenamiento {
                 }
             }
 
-            System.out.println("\nRESUMEN DE LA SESION");
+            System.out.println("\nResumen entreno :");
 
             for (Asistencia asistencia : sesion.getAsistencias()) {
 

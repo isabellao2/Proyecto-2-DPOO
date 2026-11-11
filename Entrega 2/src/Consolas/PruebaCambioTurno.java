@@ -2,8 +2,8 @@
 package Consolas;
 
 import Excepciones.ClubException;
-import Persistencia.DatosClub;
-import Persistencia.Persistencia;
+import club.Club;
+import persistencias.PersistenciaCentral;
 import Usuarios.Administrador;
 import Usuarios.Empleado;
 import Usuarios.Turno;
@@ -29,16 +29,20 @@ public class PruebaCambioTurno {
                 ruta = "datos";
             }
 
-            Persistencia persistencia = new Persistencia(ruta);
-            DatosClub datos = persistencia.cargar();
+             Club datos = new Club();
+
+            PersistenciaCentral persistencia = new PersistenciaCentral();
+            persistencia.cargarTodo(datos, ruta);
 
             System.out.println("Datos cargados correctamente.");
-            System.out.println(datos.resumen());
+            System.out.println(datos.getUsuarios().size() + " usuarios, " + datos.getEquipos().size() + " equipos, "
+                    + datos.getInstalaciones().size() + " instalaciones.");
 
             System.out.println("Turnos actuales:");
-            for (Empleado e : datos.empleados.values()) {
+            for (Empleado e : datos.getEmpleados()) {
                 System.out.println(e.getLogin() + ": " + e.getTurnos());
             }
+
 
             System.out.println("\nINICIO DE SESION DEL EMPLEADO");
             System.out.print("Login: ");
@@ -73,7 +77,7 @@ public class PruebaCambioTurno {
 
                 List<Turno> turnos = empleado.getTurnos();
 
-                System.out.println("\nTUS TURNOS");
+                System.out.println("\nTus Turnos");
                 for (int i = 0; i < turnos.size(); i++) {
                     System.out.println((i + 1) + ". " + turnos.get(i));
                 }
@@ -163,7 +167,7 @@ public class PruebaCambioTurno {
                 otraSolicitud = scanner.nextLine().equalsIgnoreCase("s");
             }
 
-            System.out.println("\nTURNOS FINALES");
+            System.out.println("\nTurnos finales:");
             for (Empleado e : datos.empleados.values()) {
                 System.out.println(e.getLogin() + ": " + e.getTurnos());
             }
