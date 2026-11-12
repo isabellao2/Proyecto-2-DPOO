@@ -37,16 +37,28 @@ public class PersistenciaUsuarios {
                     int puntosFidelidad = Integer.parseInt(partes[5]);
 
                     Socio nuevoSocio = new Socio(login, password, edad);
+                    // se agregaron los datos faltantes para guardar a socio
+                    nuevoSocio.setFisicoApto (aptoFisico);
+                    nuevoSocio.setPuntosFidelidad (puntosFidelidad);
+    
                     seneca.agregarUsuario(nuevoSocio);
                 }
                 else if (tipoUsuario.equals("ENTRENADOR")){
                     String codigoDescuento = partes[3];
                     Entrenador nuevoEntrenador = new Entrenador(login, password, codigoDescuento);
+                    // complemento de funcion para persistencia usuario entrenador 
+                    if (partes.length > 4){
+                        nuevoEntrenador.setPuntosFidelidad(Integer.parseInt(partes[4]));
+                    }
                     seneca.agregarUsuario(nuevoEntrenador);
                 }
                 else if (tipoUsuario.equals("FISIOTERAPEUTA")){
                     String codigoDescuento = partes[3];
                     Fisioterapeuta nuevoFisio = new Fisioterapeuta(login, password, codigoDescuento);
+                    // complemento de funcion para persistencia usuario entrenador 
+                    if (partes.length > 4){
+                        nuevoFisio.setPuntosFidelidad(Integer.parseInt(partes[4]));
+                    }
                     seneca.agregarUsuario(nuevoFisio);
                 }
                 else if (tipoUsuario.equals("ADMIN")){
@@ -65,17 +77,17 @@ public class PersistenciaUsuarios {
             for (Usuario usuario : seneca.getUsuarios()){
                 if (usuario instanceof Socio){
                     Socio s = (Socio) usuario;
-                    String linea = "SOCIO" + SEPARADOR + s.getLogin() + SEPARADOR + s.getContraseña() + SEPARADOR + s.getEdad();
+                    String linea = "SOCIO" + SEPARADOR + s.getLogin() + SEPARADOR + s.getContraseña() + SEPARADOR + s.getEdad()  + SEPARADOR + s.isFisicoApto()  + SEPARADOR + s.getPuntosFidelidad();
                     escritor.println(linea);
                 }
                 else if (usuario instanceof Entrenador){
                     Entrenador entren = (Entrenador) usuario;
-                    String linea = "ENTRENADOR"+ SEPARADOR + entren.getLogin() + SEPARADOR + entren.getContraseña() + entren.getCodigoDescuento();
+                    String linea = "ENTRENADOR"+ SEPARADOR + entren.getLogin() + SEPARADOR + entren.getContraseña() + SEPARADOR + entren.getCodigoDescuento() + SEPARADOR + entren.getPuntosFidelidad();
                     escritor.println(linea);
                 }
                 else if (usuario instanceof Fisioterapeuta){
                     Fisioterapeuta fisio = (Fisioterapeuta) usuario;
-                    String linea = "FISIOTERAPEUTA" + SEPARADOR + fisio.getLogin() + SEPARADOR + fisio.getContraseña() + fisio.getCodigoDescuento();
+                    String linea = "FISIOTERAPEUTA" + SEPARADOR + fisio.getLogin() + SEPARADOR + fisio.getContraseña() + SEPARADOR + fisio.getCodigoDescuento() + SEPARADOR + fisio.getPuntosFidelidad();
                     escritor.println(linea);
                 }
                 else if (usuario instanceof Administrador){

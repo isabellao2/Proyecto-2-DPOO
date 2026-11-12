@@ -29,6 +29,7 @@ public class PersistenciaCentral {
     public void guardarTodo(Club club, String carpeta) throws IOException, PersistenciaException {
         usuarios.guardarUsuarios(club, carpeta);
         turnos.guardarTurnos(club, carpeta);
+        deporteConjunto.guardarDeporteConjunto(club,carpeta);
         tiendaCafeteria.guardarTiendaCafeteria(club, carpeta);
     }
 }
