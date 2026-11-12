@@ -37,7 +37,7 @@ public class PruebaEntrenamiento {
 
             Club datos = new Club ();
             PersistenciaCentral persistencia = new PersistenciaCentral();
-            persistencia.cargarTodos(datos, ruta);
+            persistencia.cargarTodo(datos, ruta);
 
             System.out.println("Datos cargados correctamente.");
 
