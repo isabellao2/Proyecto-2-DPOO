@@ -26,12 +26,15 @@ import java.util.Set;
 public class Administrador extends Usuario {
 	
 	public static final int min_disponibles = 2;
+    public static final int MIN_ENTRENADORES = 2;
+    public static final int MIN_FISIOTERAPEUTAS = 1;
 	
 	private final List<Socio> socios;
     private final List<Equipo> equipos;
     private final List<Empleado> empleados;
     private final List<TiendaDeportiva> tiendas;
     private final List<Cafeteria> cafeterias;
+
 
     public Administrador(String login, String contrasena) throws ClubException {
         super(login, contrasena);
@@ -175,23 +178,30 @@ public class Administrador extends Usuario {
             if (empleados == null) {
                 throw new ClubException("Necesitamos la lista de empleados para verificar la disponibilidad.");
             }
-            int quedarian = contarEmpleadosEn(empleados, turnoActual.getDia(), turnoActual.getHora()) - 1;
-            if (quedarian < min_disponibles) {
-                throw new ClubException("No podemos aprobar el cambio: el " + turnoActual.getDia() + " a las "
-                        + turnoActual.getHora() + " quedarían " + Math.max(quedarian, 0)
-                        + " empleados y necesitamos al menos " + min_disponibles + ".");
+            int entrenadores = contarEmpleadosEn(empleados, Entrenador.class, turnoActual.getDia(), turnoActual.getHora());
+            int fisioterapeutas = contarEmpleadosEn(empleados, Fisioterapeuta.class, turnoActual.getDia(), turnoActual.getHora());
+            if (empleado instanceof Entrenador) {
+                entrenadores--;
+            } else if (empleado instanceof Fisioterapeuta) {
+                fisioterapeutas--;
+            }
+            if (entrenadores < MIN_ENTRENADORES || fisioterapeutas < MIN_FISIOTERAPEUTAS) {
+                 throw new ClubException("No podemos aprobar el cambio: el " + turnoActual.getDia() + " a las "
+                    + turnoActual.getHora() + " quedarían " + Math.max(entrenadores, 0) + " entrenadores y "
+                + Math.max(fisioterapeutas, 0) + " fisioterapeutas, y necesitamos al menos "
+                + MIN_ENTRENADORES + " y " + MIN_FISIOTERAPEUTAS + ".");
             }
             turnoActual.aprobarTurno();
-        }
+            }
 
-        private int contarEmpleadosEn(List<Empleado> lista, DayOfWeek dia, LocalTime hora) {
-            int total = 0;
-            for (Empleado e : lista) {
-                if (e.estaDisponibleEn(dia, hora)) {
-                    total++;
+            private int contarEmpleadosEn(List<Empleado> lista, Class<? extends Empleado> tipo, DayOfWeek dia, LocalTime hora) {
+                int total = 0;
+                for (Empleado e : lista) {
+                    if (tipo.isInstance(e) && e.estaDisponibleEn(dia, hora)) {
+                        total++;
                 }
             }
-            return total;
+                return total;
         }
 
         public void gestionarSugerencia(Empleado empleado, String sugerencia, boolean aprobar) throws ClubException {

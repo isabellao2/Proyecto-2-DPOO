@@ -77,6 +77,18 @@ public class Equipo {
         return deporte.cumpleMinimo(contarHabilitados());
     }
 
+    public List<String> listanohabilitados (){
+         List<String> lista = new ArrayList<>();
+         for (ComposicionEquipo c : composicion) {
+            if (!c.estaHabilitado()) {
+                lista.add(c.consultarEstado());
+        }
+    }
+    return lista;
+}
+
+    }
+
     
     public boolean puedeAceptar(Socio s, int numeroCamiseta) throws ClubException {
         if (s == null) {
