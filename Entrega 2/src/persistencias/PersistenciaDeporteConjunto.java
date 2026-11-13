@@ -6,6 +6,9 @@ import DeporteConjunto.DeporteConjunto;
 import DeporteConjunto.Equipo;
 import Excepciones.PersistenciaException;
 import Usuarios.Socio;
+import DeporteConjunto.ComposicionEquipo;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -59,5 +62,21 @@ public class PersistenciaDeporteConjunto {
             }
         }
         return filas;
+    }
+
+    //nuevo
+     public void guardarDeporteConjunto(Club club, String carpeta) throws IOException, PersistenciaException {
+        String ruta = carpeta + "/composiciones.txt";
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(ruta))) {
+            escritor.println("# equipo;login;posicion;camiseta");
+            for (Equipo e : club.getEquipos()) {
+                for (ComposicionEquipo c : e.getComposicion()) {
+                    escritor.println(e.getNombre() + SEPARADOR + c.getJugador().getLogin()
+                            + SEPARADOR + c.getPosicion() + SEPARADOR + c.getNumeroCamiseta());
+                }
+            }
+        } catch (IOException ex) {
+            throw new PersistenciaException("No se pudo escribir " + ruta + ". Error: " + ex);
+        }
     }
 }
