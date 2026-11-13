@@ -23,6 +23,7 @@ public class PersistenciaCentral {
         deporteConjunto.cargarDeporteConjunto(club, carpeta);
         deporteIndividual.cargarInstalaciones(club, carpeta);
         tiendaCafeteria.cargarTiendaCafeteria(club, carpeta);
+        club.conectarAdministradores(); //cambio
     }
 
     /** Guarda lo que las consolas pueden modificar: usuarios (puntos), turnos y tienda/cafetería. */

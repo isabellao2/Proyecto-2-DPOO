@@ -17,7 +17,6 @@ import Entrenamiento.SesionesEntrenamiento;
 import Partidos.Partido;
 import TiendaCafeteria.Cafeteria;
 import TiendaCafeteria.TiendaDeportiva;
-import TiendaCafeteria.Venta;
 import Usuarios.Administrador;
 import Usuarios.Empleado;
 import Usuarios.Entrenador;
@@ -49,7 +48,6 @@ public class Club {
     // Colecciones sin identificador natural: se guardan como listas
     private final List<Partido> partidos = new ArrayList<>();
     private final List<SesionesEntrenamiento> sesiones = new ArrayList<>();
-    private final List<Venta> ventas = new ArrayList<>();
 
     // Únicas en el club
     private TiendaDeportiva tienda;
@@ -122,6 +120,20 @@ public class Club {
             }
         }
         return null;
+    }
+    //nuevo metodo
+     public void conectarAdministradores() {
+        for (Administrador a : getAdministradores()) {
+            for (Empleado e : getEmpleados()) {
+                a.registrarEmpleado(e);
+            }
+            if (tienda != null) {
+                a.registrarTienda(tienda);
+            }
+            if (cafeteria != null) {
+                a.registrarCafeteria(cafeteria);
+            }
+        }
     }
 
     // ---------------------------------------------------------------
@@ -226,14 +238,6 @@ public class Club {
 
     public List<SesionesEntrenamiento> getSesiones() {
         return Collections.unmodifiableList(sesiones);
-    }
-
-    public void agregarVenta(Venta v) {
-        ventas.add(v);
-    }
-
-    public List<Venta> getVentas() {
-        return Collections.unmodifiableList(ventas);
     }
 
     // ---------------------------------------------------------------
