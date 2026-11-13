@@ -40,9 +40,13 @@ public class PersistenciaTorneos {
                 }
                 String[] p = linea.split(SEPARADOR);
                 try {
+                       double valorBono = 0;
+                    if (p.length > 9) {
+                        valorBono = Double.parseDouble(p[9].trim());
+                    }
                     Torneo t = new Torneo(p[0], TipoTorneo.valueOf(p[1].trim().toLowerCase()), Modalidad.valueOf(p[2].trim()),
                             p[3], p[4], Integer.parseInt(p[5].trim()), Double.parseDouble(p[6].trim()),
-                            LocalDate.parse(p[7].trim()));
+                            LocalDate.parse(p[7].trim()), valorBono);
                     t.restaurarEstado(EstadoTorneo.valueOf(p[8].trim()));
                     club.agregarTorneo(t);
                 } catch (RuntimeException e) {
@@ -89,12 +93,12 @@ public class PersistenciaTorneos {
     public void guardarTorneos(Club club, String carpeta) throws IOException, PersistenciaException {
         try (PrintWriter torneos = new PrintWriter(new FileWriter(carpeta + "/" + ARCHIVO_TORNEOS));
                 PrintWriter inscripciones = new PrintWriter(new FileWriter(carpeta + "/" + ARCHIVO_INSCRIPCIONES))) {
-            torneos.println("# nombre;tipo;modalidad;deporte;categoria;cupos;tarifa;fecha;estado");
+            torneos.println("# nombre;tipo;modalidad;deporte;categoria;cupos;tarifa;fecha;estado;valorBono");
             inscripciones.println("# torneo;participante;pareja;equipo;tipoCupo;tarifaPagada ( - si no aplica)");
             for (Torneo t : club.getTorneos()) {
                 torneos.println(t.getNombre() + SEPARADOR + t.getTipo() + SEPARADOR + t.getModalidad() + SEPARADOR
                         + t.getDeporte() + SEPARADOR + t.getCategoria() + SEPARADOR + t.getCupos() + SEPARADOR
-                        + t.getTarifa() + SEPARADOR + t.getFecha() + SEPARADOR + t.getEstado());
+                        + t.getTarifa() + SEPARADOR + t.getFecha() + SEPARADOR + t.getEstado() + SEPARADOR + t.getValorBono());
                 for (InscripcionTorneo i : t.getInscripciones()) {
                     inscripciones.println(t.getNombre() + SEPARADOR
                             + (i.getParticipante() == null ? VACIO : i.getParticipante().getLogin()) + SEPARADOR

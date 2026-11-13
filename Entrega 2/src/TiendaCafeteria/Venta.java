@@ -1,6 +1,9 @@
 package TiendaCafeteria;
 
 import java.time.LocalDate;
+
+import Excepciones.ClubException;
+import Torneos.BonoDescuento;
 import Usuarios.Usuario;
 
 public class Venta {
@@ -11,6 +14,9 @@ public class Venta {
     private double valor;
     private double descuento;
     private Usuario comprador;
+    private BonoDescuento bonoAplicado;
+    private boolean usaPuntos;
+    private String codigoDescuentoEmpleado;
 // nuevo atributo 
     public static final double TASA_PUNTOS = 0.02;
 
@@ -25,12 +31,12 @@ public class Venta {
         this.comprador = comprador;
     }
 
-    public double calcularTotal() {
+     public double calcularTotal() {
         return (this.valor + this.impuesto + this.propina) - this.descuento;
     }
 
     public int calcularPuntosFidelidad() {
-        return (int) ((valor - descuento) * TASA_PUNTOS);
+        return (int) Math.max(0, (valor - descuento) * TASA_PUNTOS);
     }
 
     public boolean esRubro(String rubroBuscado) {
@@ -38,6 +44,24 @@ public class Venta {
             return false;
         }
         return this.rubro.equalsIgnoreCase(rubroBuscado);
+    }
+
+    //Nuevos de Torneo
+
+    public void aplicarBonoTorneo(BonoDescuento bono) throws ClubException {
+        if (bono == null) {
+            return;
+        }
+        if (bono.isUsado()) {
+            throw new ClubException("Este bono de descuento ya fue utilizado anteriormente.");
+        }
+        // Restricción: No es acumulable con otros descuentos
+        if (usaPuntos || (codigoDescuentoEmpleado != null && !codigoDescuentoEmpleado.isBlank())) {
+            throw new ClubException("El bono de descuento de torneo recreativo no es acumulable con puntos ni con códigos de empleado.");
+        }
+        
+        this.bonoAplicado = bono;
+        bono.usarBono(); 
     }
     
     // getters y setters 

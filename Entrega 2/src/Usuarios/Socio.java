@@ -16,6 +16,7 @@ import DeporteIndividual.PuntajeRanking;
 import DeporteIndividual.Reserva;
 import Partidos.EstadisticaPartido;
 import Partidos.Partido;
+import Torneos.BonoDescuento;
 
 
 public class Socio extends Usuario {
@@ -28,6 +29,8 @@ public class Socio extends Usuario {
    private final List<Reserva> reservas;
    private final List<Partido> partidos;
    private final List<PartidoPractica> partidosPractica;
+   private List<BonoDescuento> bonosDisponibles = new ArrayList<>();
+
 
    public static final int MINUTOS_VENTANA_BEBIDA = 30;
    private LocalDateTime ultimaBebidaCaliente;  
@@ -295,6 +298,17 @@ public class Socio extends Usuario {
     LocalDateTime desde = inicioReserva.minusMinutes(MINUTOS_VENTANA_BEBIDA);
     return ultimaBebidaCaliente.isAfter(desde)
            && !ultimaBebidaCaliente.isAfter(inicioReserva);
+        }
+
+    // metodo Torneo 
+    public void agregarBonoDescuento(BonoDescuento bono) {
+    if (bono != null) {
+        bonosDisponibles.add(bono);
+        }
+    }
+
+    public List<BonoDescuento> getBonosDisponibles() {
+        return bonosDisponibles;
         }
 	}
 

@@ -21,6 +21,10 @@ import TiendaCafeteria.Articulo;
 import TiendaCafeteria.Cafeteria;
 import TiendaCafeteria.TiendaDeportiva;
 import TiendaCafeteria.Venta;
+import Torneos.Modalidad;
+import Torneos.TipoTorneo;
+import Torneos.Torneo;
+import Torneos.BonoDescuento;
 
 public class Administrador extends Usuario {
 
@@ -314,4 +318,43 @@ public class Administrador extends Usuario {
         }
         return total;
     }
+
+    // Torneos
+
+    public Torneo crearTorneo(String nombre, TipoTorneo tipo, Modalidad modalidad, String deporte, String categoria, int cupos, double tarifa, LocalDate fecha, double valorBono) throws ClubException {
+        Club c = clubConectado();
+        if (nombre == null || nombre.isBlank()) {
+            throw new ClubException("Escribe el nombre del torneo.");
+        }
+        String n = nombre.trim();
+        
+        // Verificamos si ya existe un torneo con el mismo nombre en el club
+        if (c.buscarTorneo(n) != null) {
+            throw new ClubException("Ya existe un torneo llamado '" + n + "'.");
+        }
+        
+       Torneo nuevoTorneo = new Torneo(n, tipo, modalidad, deporte, categoria, cupos, tarifa, fecha, valorBono);
+        c.agregarTorneo(nuevoTorneo);
+        return nuevoTorneo;
+    }
+
+    public void iniciarTorneo(Torneo torneo) throws ClubException {
+        if (torneo == null) {
+            throw new ClubException("Selecciona un torneo válido para iniciar.");
+        }
+        torneo.iniciar();
+    }
+
+    public void finalizarTorneo(Torneo torneo, Usuario ganadorUsuario, Equipo ganadorEquipo) throws ClubException {
+        if (torneo == null) {
+            throw new ClubException("Selecciona un torneo válido para finalizar.");
+        }
+        torneo.finalizarTorneo(ganadorUsuario, ganadorEquipo);
+    }
+
+     public List<Torneo> consultarTorneos() {
+        return new ArrayList<>(clubConectado().getTorneos());
+    }
+    
+
 }
