@@ -70,6 +70,13 @@ public class Club {
 
     public void agregarUsuario(Usuario u) {
         agregarSinRepetir(usuarios, u.getLogin(), u, "usuario");
+        if (u instanceof Administrador) {
+            ((Administrador) u).setClub(this);
+        }
+    }
+
+      public void eliminarUsuario(Usuario u) {
+        usuarios.remove(u.getLogin());
     }
 
     public Usuario buscarUsuario(String login) {
@@ -93,6 +100,8 @@ public class Club {
         Usuario u = usuarios.get(login);
         return (u instanceof Socio) ? (Socio) u : null;
     }
+
+    
 
     public List<Socio> getSocios() {
         return filtrarUsuarios(Socio.class);
@@ -123,21 +132,7 @@ public class Club {
         }
         return null;
     }
-    //nuevo metodo
-     public void conectarAdministradores() {
-        for (Administrador a : getAdministradores()) {
-            for (Empleado e : getEmpleados()) {
-                a.registrarEmpleado(e);
-            }
-            if (tienda != null) {
-                a.registrarTienda(tienda);
-            }
-            if (cafeteria != null) {
-                a.registrarCafeteria(cafeteria);
-            }
-        }
-    }
-
+   
     // ---------------------------------------------------------------
     // Deportes de conjunto
     // ---------------------------------------------------------------
@@ -176,6 +171,10 @@ public class Club {
 
     public Collection<Equipo> getEquipos() {
         return Collections.unmodifiableCollection(equipos.values());
+    }
+
+    public void eliminarEquipo(Equipo e) {
+        equipos.remove(e.getNombre());
     }
 
     // ---------------------------------------------------------------

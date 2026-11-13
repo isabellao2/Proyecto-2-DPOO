@@ -63,20 +63,35 @@ public class PersistenciaDeporteConjunto {
         }
         return filas;
     }
+    //cambio
+   public void guardarDeporteConjunto(Club club, String carpeta) throws IOException, PersistenciaException {
+        guardarEquipos(club, carpeta + "/equipos.txt");
+        guardarComposiciones(club, carpeta + "/composiciones.txt");
+    }
 
-public void guardarDeporteConjunto(Club club, String carpeta) throws IOException, PersistenciaException {
-    try (PrintWriter equipos = new PrintWriter(new FileWriter(carpeta + "/equipos.txt"));
-            PrintWriter composiciones = new PrintWriter(new FileWriter(carpeta + "/composiciones.txt"))) {
-        equipos.println("# nombre;deporte;categoria;cupoMaximo");
-        composiciones.println("# equipo;loginSocio;posicion;numeroCamiseta");
-        for (Equipo e : club.getEquipos()) {
-            equipos.println(e.getNombre() + SEPARADOR + e.getDeporte().getNombre() + SEPARADOR
-                    + e.getCategoria().getNombre() + SEPARADOR + e.getCupoMaximo());
-            for (ComposicionEquipo c : e.getComposicion()) {
-                composiciones.println(e.getNombre() + SEPARADOR + c.getJugador().getLogin() + SEPARADOR
-                        + c.getPosicion() + SEPARADOR + c.getNumeroCamiseta());
+    private void guardarEquipos(Club club, String ruta) throws PersistenciaException {
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(ruta))) {
+            escritor.println("# nombre;deporte;categoria;cupo");
+            for (Equipo e : club.getEquipos()) {
+                escritor.println(e.getNombre() + SEPARADOR + e.getDeporte().getNombre()
+                        + SEPARADOR + e.getCategoria().getNombre() + SEPARADOR + e.getCupoMaximo());
+            }
+        } catch (IOException ex) {
+            throw new PersistenciaException("No se pudo escribir " + ruta + ". Error: " + ex);
+        }
+    }
+
+    private void guardarComposiciones(Club club, String ruta) throws PersistenciaException {
+        try (PrintWriter escritor = new PrintWriter(new FileWriter(ruta))) {
+            escritor.println("# equipo;login;posicion;camiseta");
+            for (Equipo e : club.getEquipos()) {
+                for (ComposicionEquipo c : e.getComposicion()) {
+                    escritor.println(e.getNombre() + SEPARADOR + c.getJugador().getLogin()
+                            + SEPARADOR + c.getPosicion() + SEPARADOR + c.getNumeroCamiseta());
                 }
             }
+        } catch (IOException ex) {
+            throw new PersistenciaException("No se pudo escribir " + ruta + ". Error: " + ex);
         }
     }
 }

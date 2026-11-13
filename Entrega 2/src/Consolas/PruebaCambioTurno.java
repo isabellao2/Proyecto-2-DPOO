@@ -145,9 +145,8 @@ public class PruebaCambioTurno {
                         boolean aprobar = scanner.nextLine().equalsIgnoreCase("s");
 
                         try {
-                            administrador.gestionarCambioTurno(
-                                    empleado, turnoActual, aprobar,
-                                    datos.getEmpleados());
+                           administrador.gestionarCambioTurno(
+                                empleado, turnoActual, aprobar);
 
                             System.out.println(aprobar
                                     ? "Cambio aprobado."

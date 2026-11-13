@@ -1,96 +1,114 @@
 package Usuarios;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import club.Club;
 import DeporteConjunto.Categoria;
 import DeporteConjunto.DeporteConjunto;
 import DeporteConjunto.Equipo;
+import DeporteIndividual.Reserva;
 import Entrenamiento.SesionesEntrenamiento;
 import Excepciones.ClubException;
-import DeporteIndividual.Reserva;
 import Partidos.Partido;
 import TiendaCafeteria.Articulo;
 import TiendaCafeteria.Cafeteria;
 import TiendaCafeteria.TiendaDeportiva;
-
-
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import TiendaCafeteria.Venta;
 
 public class Administrador extends Usuario {
-	
-	public static final int min_disponibles = 2;
+
     public static final int MIN_ENTRENADORES = 2;
     public static final int MIN_FISIOTERAPEUTAS = 1;
-	
-	private final List<Socio> socios;
-    private final List<Equipo> equipos;
-    private final List<Empleado> empleados;
-    private final List<TiendaDeportiva> tiendas;
-    private final List<Cafeteria> cafeterias;
 
+    public static final String RUBRO_TIENDA = "TIENDA";
+    public static final String RUBRO_CAFETERIA = "CAFETERIA";
+    public static final String RUBRO_MENSUALIDAD = "MENSUALIDAD";
+
+    public enum Periodo { DIARIO, SEMANAL, MENSUAL }
+
+    // Se asigna desde Club.agregarUsuario; el administrador no guarda copias de las listas
+    private Club club;
 
     public Administrador(String login, String contrasena) throws ClubException {
         super(login, contrasena);
-        this.socios = new ArrayList<>();
-        this.equipos = new ArrayList<>();
-        this.empleados = new ArrayList<>();
-        this.tiendas = new ArrayList<>();
-        this.cafeterias = new ArrayList<>();
     }
-    
-    public Socio crearJugador (String login, String contrasena, int edad) throws ClubException {
-        if (login != null) {
-            for (Socio s : socios) {
-                if (s.getLogin().equalsIgnoreCase(login.trim())) {
-                    throw new ClubException("Ya existe un jugador con el login '" + login.trim());
-                }
-            }
+
+    public void setClub(Club club) {
+        this.club = club;
+    }
+
+    private Club clubConectado() {
+        if (club == null) {
+            throw new ClubException("El administrador no está conectado al club.");
         }
-        Socio nuevo = new Socio(login, contrasena, edad);
-        socios.add(nuevo);
+        return club;
+    }
+
+    //Jugadores y equipos 
+
+    public Socio crearJugador(String login, String contrasena, int edad) throws ClubException {
+        Club c = clubConectado();
+        if (login == null || login.isBlank()) {
+            throw new ClubException("Escribe el login del jugador.");
+        }
+        String l = login.trim();
+        if (c.buscarUsuario(l) != null) {
+            throw new ClubException("Ya existe un usuario con el login '" + l + "'.");
+        }
+        Socio nuevo = new Socio(l, contrasena, edad);
+        c.agregarUsuario(nuevo);
         return nuevo;
     }
-    
+
     public Equipo crearEquipo(String nombre, DeporteConjunto deporte, Categoria categoria, int cupoMaximo)
             throws ClubException {
-        if (nombre != null) {
-            for (Equipo e : equipos) {
-                if (e.getNombre().equalsIgnoreCase(nombre.trim())) {
-                    throw new ClubException("Ya existe un equipo llamado '" + nombre.trim());
-                }
-            }
+        Club c = clubConectado();
+        if (nombre == null || nombre.isBlank()) {
+            throw new ClubException("Escribe el nombre del equipo.");
         }
-        Equipo nuevo = new Equipo(nombre, deporte, categoria, cupoMaximo);
-        equipos.add(nuevo);
+        String n = nombre.trim();
+        if (c.buscarEquipo(n) != null) {
+            throw new ClubException("Ya existe un equipo llamado '" + n + "'.");
+        }
+        Equipo nuevo = new Equipo(n, deporte, categoria, cupoMaximo);
+        c.agregarEquipo(nuevo);
         return nuevo;
     }
 
     public void darDeBajaEquipo(Equipo equipo) throws ClubException {
-        if (equipo == null || !equipos.contains(equipo)) {
+        Club c = clubConectado();
+        if (equipo == null || c.buscarEquipo(equipo.getNombre()) == null) {
             throw new ClubException("No encontramos ese equipo entre los equipos del club.");
         }
         equipo.disolver();
-        equipos.remove(equipo);
+        c.eliminarEquipo(equipo);
     }
+
     public void darDeBajaJugador(Socio jugador) throws ClubException {
-        if (jugador == null || !socios.contains(jugador)) {
+        Club c = clubConectado();
+        if (jugador == null || c.buscarSocio(jugador.getLogin()) == null) {
             throw new ClubException("No encontramos a ese jugador entre los jugadores del club.");
         }
-        for (Equipo e : equipos) {
+        for (Equipo e : c.getEquipos()) {
             if (e.tieneJugador(jugador)) {
                 e.retirarJugador(jugador);
             }
         }
-        socios.remove(jugador);
+        c.eliminarUsuario(jugador);
     }
+
+    //Historial 
+
     public List<Reserva> consultarHistorialReservas() {
         List<Reserva> resultado = new ArrayList<>();
-        for (Socio s : socios) {
+        for (Socio s : clubConectado().getSocios()) {
             resultado.addAll(s.getReservas());
         }
         return resultado;
@@ -98,7 +116,7 @@ public class Administrador extends Usuario {
 
     public List<Partido> consultarHistorialPartidos() {
         Set<Partido> unicos = new LinkedHashSet<>();
-        for (Socio s : socios) {
+        for (Socio s : clubConectado().getSocios()) {
             unicos.addAll(s.getPartidos());
         }
         return new ArrayList<>(unicos);
@@ -119,27 +137,61 @@ public class Administrador extends Usuario {
 
     public List<SesionesEntrenamiento> consultarHistorialEntrenamiento() {
         List<SesionesEntrenamiento> resultado = new ArrayList<>();
-        for (Empleado e : empleados) {
-            if (e instanceof Entrenador) {
-                resultado.addAll(((Entrenador) e).getSesiones());
-            }
-        }
-        return resultado;
-    }
-    
-    public List<Articulo> consultarInventario() {
-        List<Articulo> resultado = new ArrayList<>();
-        for (TiendaDeportiva t : tiendas) {
-            resultado.addAll(t.getArticulosDisponibles());
+        for (Entrenador e : clubConectado().getEntrenadores()) {
+            resultado.addAll(e.getSesiones());
         }
         return resultado;
     }
 
-    public List<Articulo> consultarArticulosAgotados() {
+    // Inventario (RF13, HU-03) 
+
+    public List<Articulo> consultarInventario() {
         List<Articulo> resultado = new ArrayList<>();
+        TiendaDeportiva tienda = clubConectado().getTienda();
+        if (tienda != null) {
+            resultado.addAll(tienda.getArticulosDisponibles());
+        }
+        return resultado;
+    }
+
+  
+    public Map<String, List<Articulo>> consultarInventarioPorUbicacion() {
+        Map<String, List<Articulo>> resultado = new LinkedHashMap<>();
         for (Articulo a : consultarInventario()) {
-            if (a.estaAgotado()) {
-                resultado.add(a);
+            String ubicacion = a.getUbicacion();
+            if (!resultado.containsKey(ubicacion)) {
+                resultado.put(ubicacion, new ArrayList<Articulo>());
+            }
+            resultado.get(ubicacion).add(a);
+        }
+        return resultado;
+    }
+
+    //HU-03
+    public List<String> consultarProductosAgotados() {
+        Map<String, Integer> total = new LinkedHashMap<>();
+        for (Articulo a : consultarInventario()) {
+            int actual = 0;
+            if (total.containsKey(a.getNombre())) {
+                actual = total.get(a.getNombre());
+            }
+            total.put(a.getNombre(), actual + a.getCantidadDisponible());
+        }
+        List<String> agotados = new ArrayList<>();
+        for (Map.Entry<String, Integer> e : total.entrySet()) {
+            if (e.getValue() == 0) {
+                agotados.add(e.getKey());
+            }
+        }
+        return agotados;
+    }
+
+    // HU-03
+    public Set<String> consultarUbicacionesParaReabastecer() {
+        Set<String> resultado = new LinkedHashSet<>();
+        for (Articulo a : consultarInventario()) {
+            if (a.getCantidadDisponible() == 0) {
+                resultado.add(a.getUbicacion());
             }
         }
         return resultado;
@@ -152,95 +204,114 @@ public class Administrador extends Usuario {
         if (ubicacion != null && !ubicacion.isBlank() && !ubicacion.trim().equalsIgnoreCase(articulo.getUbicacion())) {
             articulo.mover(ubicacion);
         }
-        articulo.abastecer(cantidad);}
-        
-        public void asignarTurno(Empleado empleado, Turno turno) throws ClubException {
-            if (empleado == null) {
-                throw new ClubException("Elige el empleado al que quieres asignar el turno.");
-            }
-            empleado.agregarTurno(turno);
+        articulo.abastecer(cantidad);
+    }
+
+    //Turnos (HU-01) 
+
+    public void asignarTurno(Empleado empleado, Turno turno) throws ClubException {
+        if (empleado == null) {
+            throw new ClubException("Elige el empleado al que quieres asignar el turno.");
+        }
+        empleado.agregarTurno(turno);
+    }
+
+     
+    public void gestionarCambioTurno(Empleado empleado, Turno turnoActual, boolean aprobar)
+            throws ClubException {
+        if (empleado == null || turnoActual == null || turnoActual.getEmpleado() != empleado) {
+            throw new ClubException("Ese turno no pertenece al empleado indicado.");
+        }
+        if (!turnoActual.estaPendiente()) {
+            throw new ClubException("Ese turno no tiene una solicitud de cambio pendiente.");
+        }
+        if (!aprobar) {
+            turnoActual.rechazarTurno();
+            return;
         }
 
-        public void gestionarCambioTurno(Empleado empleado, Turno turnoActual, boolean aprobar, List<Empleado> empleados)
-                throws ClubException {
-            if (empleado == null || turnoActual == null || turnoActual.getEmpleado() != empleado) {
-                throw new ClubException("Ese turno no pertenece al empleado indicado.");
-            }
-            if (!turnoActual.estaPendiente()) {
-                throw new ClubException("Ese turno no tiene una solicitud de cambio pendiente.");
-            }
-            if (!aprobar) {
-                turnoActual.rechazarTurno();
-                return;
-            }
-            if (empleados == null) {
-                throw new ClubException("Necesitamos la lista de empleados para verificar la disponibilidad.");
-            }
-            int entrenadores = contarEmpleadosEn(empleados, Entrenador.class, turnoActual.getDia(), turnoActual.getHora());
-            int fisioterapeutas = contarEmpleadosEn(empleados, Fisioterapeuta.class, turnoActual.getDia(), turnoActual.getHora());
-            if (empleado instanceof Entrenador) {
-                entrenadores--;
-            } else if (empleado instanceof Fisioterapeuta) {
-                fisioterapeutas--;
-            }
-            if (entrenadores < MIN_ENTRENADORES || fisioterapeutas < MIN_FISIOTERAPEUTAS) {
-                 throw new ClubException("No podemos aprobar el cambio: el " + turnoActual.getDia() + " a las "
-                    + turnoActual.getHora() + " quedarían " + Math.max(entrenadores, 0) + " entrenadores y "
-                + Math.max(fisioterapeutas, 0) + " fisioterapeutas, y necesitamos al menos "
-                + MIN_ENTRENADORES + " y " + MIN_FISIOTERAPEUTAS + ".");
-            }
-            turnoActual.aprobarTurno();
-            }
+        boolean esEntrenador = empleado instanceof Entrenador;
+        int minimo = esEntrenador ? MIN_ENTRENADORES : MIN_FISIOTERAPEUTAS;
+        String rol = esEntrenador ? "entrenadores" : "fisioterapeutas";
 
-            private int contarEmpleadosEn(List<Empleado> lista, Class<? extends Empleado> tipo, DayOfWeek dia, LocalTime hora) {
-                int total = 0;
-                for (Empleado e : lista) {
-                    if (tipo.isInstance(e) && e.estaDisponibleEn(dia, hora)) {
-                        total++;
-                }
+        int quedarian = contarDisponibles(turnoActual, esEntrenador) - 1;
+        if (quedarian < minimo) {
+            throw new ClubException("No podemos aprobar el cambio: el " + turnoActual.getDia() + " a las "
+                    + turnoActual.getHora() + " quedarían " + Math.max(quedarian, 0) + " " + rol
+                    + " y necesitamos al menos " + minimo + ".");
+        }
+        turnoActual.aprobarTurno();
+    }
+
+    private int contarDisponibles(Turno turno, boolean entrenadores) {
+        int total = 0;
+        for (Empleado e : clubConectado().getEmpleados()) {
+            boolean delRol = entrenadores ? (e instanceof Entrenador) : (e instanceof Fisioterapeuta);
+            if (delRol && e.estaDisponibleEn(turno.getDia(), turno.getHora())) {
+                total++;
             }
-                return total;
+        }
+        return total;
+    }
+
+    //Sugerencias (HU-02)
+
+    public void gestionarSugerencia(Empleado empleado, String sugerencia, boolean aprobar) throws ClubException {
+        if (empleado == null) {
+            throw new ClubException("Elige el empleado que hizo la sugerencia.");
+        }
+        empleado.resolverSugerencia(sugerencia, aprobar);
+    }
+
+    //Reportes de ventas (RF17)
+
+    /** Ventas de un rubro (TIENDA, CAFETERIA o MENSUALIDAD) en el día, la semana o el mes de la fecha dada. */
+    public List<Venta> reporteVentas(String rubro, Periodo periodo, LocalDate referencia) throws ClubException {
+        if (rubro == null || periodo == null || referencia == null) {
+            throw new ClubException("Indica el rubro, el periodo y la fecha de referencia.");
+        }
+        if (!rubro.equalsIgnoreCase(RUBRO_TIENDA) && !rubro.equalsIgnoreCase(RUBRO_CAFETERIA)
+                && !rubro.equalsIgnoreCase(RUBRO_MENSUALIDAD)) {
+            throw new ClubException("El rubro debe ser TIENDA, CAFETERIA o MENSUALIDAD.");
         }
 
-        public void gestionarSugerencia(Empleado empleado, String sugerencia, boolean aprobar) throws ClubException {
-            if (empleado == null) {
-                throw new ClubException("Elige el empleado que hizo la sugerencia.");
+        LocalDate desde;
+        LocalDate hasta;
+        if (periodo == Periodo.DIARIO) {
+            desde = referencia;
+            hasta = referencia;
+        } else if (periodo == Periodo.SEMANAL) {
+            desde = referencia.with(DayOfWeek.MONDAY);
+            hasta = desde.plusDays(6);
+        } else {
+            desde = referencia.withDayOfMonth(1);
+            hasta = referencia.withDayOfMonth(referencia.lengthOfMonth());
+        }
+
+        List<Venta> todas = new ArrayList<>();
+        TiendaDeportiva tienda = clubConectado().getTienda();
+        Cafeteria cafeteria = clubConectado().getCafeteria();
+        if (tienda != null) {
+            todas.addAll(tienda.getVentas());
+        }
+        if (cafeteria != null) {
+            todas.addAll(cafeteria.getVentas());
+        }
+
+        List<Venta> resultado = new ArrayList<>();
+        for (Venta v : todas) {
+            if (v.esRubro(rubro) && !v.getFecha().isBefore(desde) && !v.getFecha().isAfter(hasta)) {
+                resultado.add(v);
             }
-            empleado.resolverSugerencia(sugerencia, aprobar);
         }
+        return resultado;
+    }
 
-
-    	
-    
-
-        public void registrarEmpleado(Empleado e) throws ClubException {
-        	if (e == null) {
-        throw new ClubException("No encontramos al empleado que quieres registrar.");
-        	}
-        	if (!empleados.contains(e)) {
-        empleados.add(e);
-        	}
+    public static double sumarTotales(List<Venta> ventas) {
+        double total = 0;
+        for (Venta v : ventas) {
+            total += v.calcularTotal();
         }
-
-        public void registrarTienda(TiendaDeportiva t) throws ClubException {
-        	if (t == null) {
-        throw new ClubException("No encontramos la tienda que quieres registrar.");
-        	}
-        	if (!tiendas.contains(t)) {
-        		tiendas.add(t);
-        	}
-        }
-
-        public void registrarCafeteria(Cafeteria c) throws ClubException {
-        	if (c == null) {
-        throw new ClubException("No encontramos la cafetería que quieres registrar.");
-        	}
-        	if (!cafeterias.contains(c)) {
-        		cafeterias.add(c);
-        	}
-        } 
+        return total;
+    }
 }
-
-
-
-

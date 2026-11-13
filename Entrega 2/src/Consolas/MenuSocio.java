@@ -338,7 +338,7 @@ public class MenuSocio {
         }
     }
 
-    // Devuelve el torneo elegido, o null si cancela
+
     private Torneo elegirTorneo() {
         List<Torneo> lista = new ArrayList<>(club.getTorneos());
         if (lista.isEmpty()) {
@@ -377,7 +377,7 @@ public class MenuSocio {
             }
         }
 
-        // 'mejorRanking' PENDIENTE calcularlo en la lógica (ELO)
+        // mejorRanking PENDIENTE calcularlo en la lógica (ELO)
         torneo.inscribirElJugador(socio, companero, false);
         if (torneo.getTarifa() > 0) {
             System.out.println("Inscripción realizada. Tarifa: $" + torneo.getTarifa()

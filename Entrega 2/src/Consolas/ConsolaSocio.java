@@ -13,7 +13,7 @@ public class ConsolaSocio {
         PersistenciaCentral persistencia = new PersistenciaCentral();
         Entrada entrada = new Entrada();
 
-        // 1. Cargar datos
+        //Carga de datos
         try {
             persistencia.cargarTodo(club, CARPETA_DATOS);
         } catch (Exception e) {
@@ -21,17 +21,17 @@ public class ConsolaSocio {
             return;
         }
 
-        // 2. Login (3 intentos)
+        // Autenticacion maxima de 3 intentos
         Socio socio = Autenticacion.iniciarSesion(club, entrada, Socio.class, 3);
         if (socio == null) {
             return;
         }
 
-        // 3. Menú
+        //Menu / opciones del socio
         MenuSocio menu = new MenuSocio(club, socio, entrada);
         menu.mostrar();
 
-        // 4. Guardar al salir
+        // Guarda info 
         try {
             persistencia.guardarTodo(club, CARPETA_DATOS);
             System.out.println("Cambios guardados.");

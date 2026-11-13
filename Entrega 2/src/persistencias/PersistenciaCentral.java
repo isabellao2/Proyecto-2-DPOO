@@ -24,7 +24,6 @@ public class PersistenciaCentral {
         deporteConjunto.cargarDeporteConjunto(club, carpeta);
         deporteIndividual.cargarInstalaciones(club, carpeta);
         tiendaCafeteria.cargarTiendaCafeteria(club, carpeta);
-        club.conectarAdministradores(); //cambio
         torneos.cargarTorneos(club, carpeta);
     }
 
