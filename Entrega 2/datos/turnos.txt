@@ -3,7 +3,6 @@ coach;LUNES;08:00
 coach;MIERCOLES;14:00
 coach2;LUNES;08:00
 fisio;LUNES;08:00
-coach;MIERCOLES;14:00
 ecastro;LUNES;08:00
 lmejia;LUNES;08:00
 mruiz;MIERCOLES;14:00
@@ -16,4 +15,3 @@ dvargas;VIERNES;10:00
 jpardo;SABADO;09:00
 mruiz;SABADO;09:00
 lmejia;SABADO;09:00
- 
