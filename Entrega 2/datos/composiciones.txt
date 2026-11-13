@@ -13,9 +13,6 @@ Búhos;b4;Defensa;4
 Búhos;b5;Defensa;5
 Búhos;b6;Defensa;6
 Búhos;b7;Defensa;7
-<<<<<<< HEAD
-Juveniles;pedro;defensa;2
-=======
 Cóndores;tomas;Portero;1
 Cóndores;emiliano;Defensa;2
 Cóndores;samuel;Mediocampista;3
@@ -63,4 +60,3 @@ Panteras;karen;Líbero;4
 Panteras;nicole;Punta;5
 Delfines;a1;Punta;7
  
->>>>>>> branch 'Rama-2' of https://github.com/isabellao2/Proyecto-2-DPOO.git
