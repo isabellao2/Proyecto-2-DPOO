@@ -323,7 +323,7 @@ public class Torneo {
                 inscripciones.add(inscripcion);
         }
     }
-                }
+}
 
 
 

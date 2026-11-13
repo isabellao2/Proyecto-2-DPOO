@@ -40,7 +40,7 @@ public class PersistenciaTorneos {
                 }
                 String[] p = linea.split(SEPARADOR);
                 try {
-                    Torneo t = new Torneo(p[0], TipoTorneo.valueOf(p[1].trim()), Modalidad.valueOf(p[2].trim()),
+                    Torneo t = new Torneo(p[0], TipoTorneo.valueOf(p[1].trim().toLowerCase()), Modalidad.valueOf(p[2].trim()),
                             p[3], p[4], Integer.parseInt(p[5].trim()), Double.parseDouble(p[6].trim()),
                             LocalDate.parse(p[7].trim()));
                     t.restaurarEstado(EstadoTorneo.valueOf(p[8].trim()));
@@ -78,7 +78,7 @@ public class PersistenciaTorneos {
                         throw new PersistenciaException("Inscripción sin jugador ni equipo existente: " + linea);
                     }
                     torneo.restaurarInscripcion(new InscripcionTorneo(participante, pareja, equipo,
-                            TipoCupo.valueOf(p[4].trim()), Double.parseDouble(p[5].trim())));
+                            TipoCupo.valueOf(p[4].trim().toLowerCase()), Double.parseDouble(p[5].trim())));
                 } catch (IllegalArgumentException e) {
                     throw new PersistenciaException("Inscripción inválida en la línea \"" + linea + "\": " + e.getMessage());
                 }
