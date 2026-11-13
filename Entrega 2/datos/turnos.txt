@@ -3,8 +3,6 @@ coach;LUNES;08:00
 coach;MIERCOLES;14:00
 coach2;LUNES;08:00
 fisio;LUNES;08:00
-<<<<<<< HEAD
-=======
 coach;MIERCOLES;14:00
 ecastro;LUNES;08:00
 lmejia;LUNES;08:00
@@ -19,4 +17,3 @@ jpardo;SABADO;09:00
 mruiz;SABADO;09:00
 lmejia;SABADO;09:00
  
->>>>>>> branch 'Rama-2' of https://github.com/isabellao2/Proyecto-2-DPOO.git
