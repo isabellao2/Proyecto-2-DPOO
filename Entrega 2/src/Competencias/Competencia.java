@@ -1,6 +1,5 @@
 package Competencias;
 
-import Competencias.InscripcionCompetencia;
 import DeporteConjunto.Equipo;
 import Usuarios.Socio;
 import java.util.Date;

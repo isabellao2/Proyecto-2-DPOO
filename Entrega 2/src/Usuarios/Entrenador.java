@@ -1,6 +1,5 @@
 package Usuarios;
 
-import java.util.List;
 
 import DeporteIndividual.Instalacion;
 import Entrenamiento.Asistencia;
@@ -8,8 +7,6 @@ import Entrenamiento.SesionesEntrenamiento;
 import Partidos.Partido;
 import Partidos.EstadisticaPartido;
 import Partidos.EstadisticaFutbol;
-import Partidos.EstadisticaBaloncesto;
-
 
 import java.time.LocalDate;
 import java.time.LocalTime;
