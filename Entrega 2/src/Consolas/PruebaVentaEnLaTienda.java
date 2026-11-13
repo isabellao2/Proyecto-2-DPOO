@@ -73,7 +73,7 @@ public class PruebaVentaEnLaTienda {
         }
     }
 
-    // ---------- Opciones del menu ----------
+    // Opciones del menu 
 
     private static void realizarCompra(Scanner scanner, Club datos, Usuario usuario) {
         TiendaDeportiva tienda = datos.getTienda();
@@ -175,8 +175,6 @@ public class PruebaVentaEnLaTienda {
         }
     }
 
-    // ---------- Auxiliares ----------
-
     private static int leerEntero(Scanner scanner, String mensaje, int min, int max) {
         while (true) {
             System.out.print(mensaje + " [" + min + "-" + max + "]: ");
@@ -201,8 +199,7 @@ public class PruebaVentaEnLaTienda {
         }
         return empleados;
     }
-    
-    // Metodo puente para guardar sin tener que pasar el objeto persistencia a todos lados
+
     private static void persistenciaGuardarTemporal(Club datos, String carpeta) {
         try {
             new PersistenciaCentral().guardarTodo(datos, carpeta);
