@@ -17,7 +17,6 @@ public class SesionesEntrenamiento {
 	private final LocalDate fecha;
     private final LocalTime hora;
     private final int duracion;
-    private final Entrenador entrenador;
     private final Instalacion instalacion;
     private final List<Socio> jugConvocados;
     private final List<Asistencia> asistencias;
@@ -28,7 +27,6 @@ public class SesionesEntrenamiento {
 		this.fecha = fecha;
 		this.hora = hora;
 		this.duracion = duracion;
-		this.entrenador = entrenador;
 		this.instalacion = instalacion;
 		this.jugConvocados = new ArrayList <> ();
 		this.asistencias = new ArrayList <> ();

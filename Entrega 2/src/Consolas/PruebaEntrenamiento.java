@@ -21,13 +21,10 @@ public class PruebaEntrenamiento {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-
-        try {
+          try (Scanner scanner = new Scanner(System.in)) {
     
             System.out.println("    Sesion Entrenamiento   ");
   
-
             System.out.print("Enter para usar datos:");
             String ruta = scanner.nextLine();
 
@@ -148,7 +145,7 @@ public class PruebaEntrenamiento {
                     String respuesta = scanner.nextLine();
 
                     if (!respuesta.equalsIgnoreCase("s")) {
-                        persistencia.guardaTodo(datos, ruta);
+                        persistencia.guardarTodo(datos, ruta);
                         return;
                     }
                 }
@@ -262,6 +259,5 @@ public class PruebaEntrenamiento {
             System.out.println("Ocurrio un error: " + e.getMessage());
         }
 
-        scanner.close();
     }
 }

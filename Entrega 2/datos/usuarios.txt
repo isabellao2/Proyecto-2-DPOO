@@ -20,3 +20,29 @@ SOCIO;nuevo;1234;22;true;0
 SOCIO;juan;1234;25;true;297
 SOCIO;maria;1234;24;true;4030
 SOCIO;pedro;1234;16;true;0
+# --- empleados adicionales ---
+ENTRENADOR;ecastro;clave123;COACH3;0
+ENTRENADOR;mruiz;clave123;COACH4;0
+ENTRENADOR;jpardo;clave123;COACH5;0
+FISIOTERAPEUTA;lmejia;clave123;FISIO2;0
+FISIOTERAPEUTA;dvargas;clave123;FISIO3;0
+# --- socios adicionales ---
+SOCIO;tomas;1234;13;true;0
+SOCIO;emiliano;1234;14;true;0
+SOCIO;samuel;1234;13;true;0
+SOCIO;valeria;1234;14;true;0
+SOCIO;santiago;1234;13;true;0
+SOCIO;isabella;1234;14;true;0
+SOCIO;dylan;1234;13;true;0
+SOCIO;antonella;1234;14;true;0
+SOCIO;benjamin;1234;11;true;0
+SOCIO;luciana;1234;12;true;0
+SOCIO;joaquin;1234;10;true;0
+SOCIO;mariana;1234;12;true;0
+SOCIO;felipe;1234;11;true;0
+SOCIO;salome;1234;12;true;0
+SOCIO;lucas;1234;10;false;0
+SOCIO;camilo;1234;16;true;45
+SOCIO;daniela;1234;15;true;0
+
+
