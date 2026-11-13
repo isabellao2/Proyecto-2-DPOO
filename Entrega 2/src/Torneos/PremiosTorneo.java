@@ -1,6 +1,7 @@
 package Torneos;
 
 import Usuarios.Usuario;
+import Torneo.TipoPremio;
 public class PremioTorneo {
 
     private final Usuario ganador;
