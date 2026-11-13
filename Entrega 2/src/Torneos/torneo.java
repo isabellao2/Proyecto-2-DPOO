@@ -39,12 +39,12 @@ public class Torneo {
                     throw new ClubException ("Debe tener un deporte y una categoria o nivel");
                 }
                 if (cupos <=0){
-                    throw new ClubException ("El torneo debe tener al menos dos cupos");
+                    throw new ClubException ("El torneo debe tener al menos un cupo");
                 }
                 if (fecha == null){
                     throw new ClubException ("Debe indicar la fecha del torneo");
                 }
-                if (tipo == TorneoTipo.competitivo && tarifa <=0){
+                if (tipo == TipoTorneo.competitivo && tarifa <=0){
                     throw new ClubException ("Al ser competitivo debe tener una tarifa mas alta que 0 ");
                 }
                 this.nombre = nombre.trim();
@@ -53,7 +53,7 @@ public class Torneo {
                 this.deporte = deporte.trim();
                 this.categoria = categoria.trim();
                 this.cupos = cupos;
-                this.tarifa = (tipo == TipoTorneo.RECREATIVO) ? 0 : tarifa;
+                this.tarifa = (tipo == TipoTorneo.recreativo) ? 0 : tarifa;
                 this.fecha = fecha;
                 this.estado = EstadoTorneo.EN_INSCRIPCION;
                 this.preferencialLiberados = false;
@@ -135,11 +135,11 @@ public class Torneo {
                     validarEmpleado((Empleado) participante);
                     aPagar = 0;
                 }
-                if (pareja instanceof Empleado) {
+                if (compañero instanceof Empleado) {
                     validarEmpleado((Empleado) compañero);
                 }
                 TipoCupo cupo = asignarCupo(mejorRanking);
-                InscripcionTorneo inscripcion = new InscripcionTorneo(participante, pareja, null, cupo, aPagar);
+                InscripcionTorneo inscripcion = new InscripcionTorneo(participante, compañero, null, cupo, aPagar);
                 inscripciones.add(inscripcion);
                 return inscripcion;
             }
@@ -191,15 +191,15 @@ public class Torneo {
                 return calcularRecaudo () * porcentaje_premio;
             }
 
-            public void calcularRecaudo (){
+            public double calcularRecaudo (){
                 double total = 0;
                 for ( InscripcionTorneo i : inscripciones){
-                    total += i.getTarifa();
+                    total += i.getTarifaPagada();
                 }
                 return total;
             }
 
-            }
+            
 
         // operaciones de consulta o sobre los jugadores 
 
@@ -222,8 +222,8 @@ public class Torneo {
             }
 
             public void retirarJugador(Usuario u) throws ClubException {
-            validarInscripcionAbierta("retirarte");
-            InscripcionTorneo inscripcion = buscar(u);
+            validarUnaInscripcionAbierta("retirarte");
+            InscripcionTorneo inscripcion = buscarinscrip(u);
             if (inscripcion == null) {
                 throw new ClubException("Esa persona no está inscrita en " + nombre );
             }
@@ -231,8 +231,8 @@ public class Torneo {
         }
     
             public void retirarEquipo(Equipo equipo) throws ClubException {
-                validarInscripcionAbierta("retirar al equipo");
-                InscripcionTorneo inscripcion = buscar(equipo);
+                validarUnaInscripcionAbierta("retirar al equipo");
+                InscripcionTorneo inscripcion = buscarequipo(equipo);
                 if (inscripcion == null) {
                     throw new ClubException("Ese equipo no está inscrito en " + nombre );
                 }
@@ -240,17 +240,76 @@ public class Torneo {
             }
         
             public boolean estaInscrito(Usuario u) {
-                return buscar(u) != null;
+                return buscarinscrip(u) != null;
             }
         
             public boolean estaInscrito(Equipo e) {
-                return buscar(e) != null;
+                return buscarequipo(e) != null;
             }
 
+   
 
-            
+        // operaciones pqra saber lo de los cupos 
 
+            public static int calcularCuposPreferenciales (int cuposTotales){
+                return (cuposTotales + 4) / 5;
+            }
+            public int getCuposPreferenciales(){
+                return calcularCuposPreferenciales(cupos);
+            }
+            public int getCuposLibres(){
+                return cupos - inscripciones.size();
+            }
+            public int getCuposRegularesLibres (){
+                return getCuposLibres() - getCuposPreferencialesLibres ();
+            }
+            private int conteoCupos (TipoCupo tipoCupo) {
+                int total = 0;
+                for(InscripcionTorneo i : inscripciones){
+                    if(i.getTipoCupo()==tipoCupo){
+                        total ++;
+                    }
+                }
+                return total;
+            }
 
+            public void iniciar() throws ClubException {
+            if (estado != EstadoTorneo.EN_INSCRIPCION) {
+                throw new ClubException("El torneo " + nombre + " ya inició.");
+            }
+            if (inscripciones.size() < 2) {
+                throw new ClubException("Se necesitan al menos 2 inscritos para iniciar el torneo.");
+            }
+            preferencialLiberados = true;
+            estado = EstadoTorneo.EN_CURSO;
+        }
+    
+            public void finalizar() throws ClubException {
+                if (estado != EstadoTorneo.EN_CURSO) {
+                    throw new ClubException("Solo se puede finalizar un torneo que está en curso.");
+                }
+                estado = EstadoTorneo.FINALIZADO;
+            }
+            private TipoCupo asignarCupo(boolean mejorRanking) throws ClubException {
+            if (mejorRanking && getCuposPreferencialesLibres() > 0) {
+                return TipoCupo.preferencial;
+            }
+            if (getCuposRegularesLibres() > 0) {
+                return TipoCupo.regular;
+            }
+            if (getCuposLibres() == 0) {
+                throw new ClubException("El torneo " + nombre + " no tiene cupos disponibles.");
+            }
+            throw new ClubException("Los cupos que quedan en " + nombre
+                + " son preferenciales y solo son para los mejores del ranking.");
+            }
+            public int getCuposPreferencialesLibres() {
+                if (preferencialLiberados) {
+                    return 0;
+                }
+                return Math.max(0, getCuposPreferenciales() - conteoCupos(TipoCupo.preferencial));
+            }
+                }
 
 
 
