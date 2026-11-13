@@ -68,9 +68,9 @@ SOCIO;nicolas;1234;20;true;0
 SOCIO;manuela;1234;20;true;0
 SOCIO;esteban;1234;20;true;0
 SOCIO;viviana;1234;20;true;0
-SOCIO;gabriela;1234;20;true;0
-SOCIO;sara;1234;20;true;0
-SOCIO;majo;1234;20;true;0
-SOCIO;karen;1234;20;true;0
-SOCIO;nicole;1234;20;true;0
+SOCIO;gabriela;1234;14;true;0
+SOCIO;sara;1234;14;true;0
+SOCIO;majo;1234;14;true;0
+SOCIO;karen;1234;14;true;0
+SOCIO;nicole;1234;14;true;0
 
