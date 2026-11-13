@@ -1,5 +1,6 @@
 package Consolas;
 
+import DeporteConjunto.ComposicionEquipo;
 import DeporteConjunto.Equipo;
 import club.Club;
 import persistencias.PersistenciaCentral;
@@ -17,7 +18,8 @@ public class PruebaInformarEquipo {
             
             System.out.println("    INFORMACION DE EQUIPO   ");
 
-            System.out.print("Enter para usar datos (o escribe la ruta): ");
+    
+            System.out.print("Enter para usar datos: ");
             String ruta = scanner.nextLine();
 
             if (ruta.equals("")) {
@@ -42,12 +44,12 @@ public class PruebaInformarEquipo {
 
             if (usuario == null) {
                 System.out.println("El usuario no existe.");
-                return; // El try-with-resources cierra el scanner automáticamente aquí
+                return;
             }
 
             if (!usuario.verificar(login, contrasena)) {
                 System.out.println("Contrasena incorrecta.");
-                return; // Y también lo cierra aquí
+                return;
             }
 
             if (!(usuario instanceof Entrenador)) {
@@ -71,9 +73,8 @@ public class PruebaInformarEquipo {
                 }
             }
 
-            // =========================================================
-            // INFORMACION DEL EQUIPO (Mínimo y No Habilitados)
-            // =========================================================
+            // info equiop
+           
             System.out.println("\nREPORTE DEL EQUIPO: " + equipo.getNombre().toUpperCase());
             System.out.println("Deporte: " + equipo.getDeporte().getNombre());
             System.out.println("Categoria: " + equipo.getCategoria().getNombre());
@@ -90,14 +91,35 @@ public class PruebaInformarEquipo {
                 System.out.println("ESTADO: El equipo NO cumple con el minimo. Faltan " + (minimo - habilitados) + " jugadores.");
             }
 
-            System.out.println("\nLISTA DE JUGADORES NO HABILITADOS:");
+            // 2. Cambio: Tabla de jugadores disponibles (habilitados)
+            System.out.println("\n--- JUGADORES DISPONIBLES ---");
+            System.out.printf("%-20s | %-15s | %-10s%n", "LOGIN", "POSICION", "CAMISETA");
+            System.out.println("--------------------------------------------------");
+            
+            boolean hayDisponibles = false;
+            for (ComposicionEquipo comp : equipo.getComposicion()) {
+                if (comp.estaHabilitado()) {
+                    System.out.printf("%-20s | %-15s | %-10d%n", 
+                            comp.getJugador().getLogin(), 
+                            comp.getPosicion(), 
+                            comp.getNumeroCamiseta());
+                    hayDisponibles = true;
+                }
+            }
+            
+            if (!hayDisponibles) {
+                System.out.println("   (No hay jugadores disponibles en este equipo)");
+            }
+
+
+            System.out.println("\n--- JUGADORES NO HABILITADOS (SANCIONADOS/LESIONADOS) ---");
             List<String> noHabilitados = equipo.listanohabilitados();
             
             if (noHabilitados.isEmpty()) {
-                System.out.println("- No hay jugadores no habilitados.");
+                System.out.println("   (Ninguno)");
             } else {
                 for (String razon : noHabilitados) {
-                    System.out.println("- " + razon);
+                    System.out.println("   - " + razon);
                 }
             }
             
@@ -106,7 +128,5 @@ public class PruebaInformarEquipo {
         } catch (Exception e) {
             System.out.println("Ocurrio un error en el sistema: " + e.getMessage());
         }
-        
-       
     }
 }
