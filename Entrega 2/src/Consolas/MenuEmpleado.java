@@ -50,15 +50,17 @@ public class MenuEmpleado {
             System.out.println("3. Sugerir un producto nuevo");
             System.out.println("4. Ver mis sugerencias");
             System.out.println("5. Comprar en la tienda");
-            System.out.println("6. Inscribirme a un torneo");
-            System.out.println("7. Retirarme de un torneo");
+            System.out.println("6. Ver mi historial de compras y puntos");
+            System.out.println("7. Ver torneos");
+            System.out.println("8. Inscribirme a un torneo");
+            System.out.println("9. Retirarme de un torneo");
             int maximo = 9;
             if (empleado instanceof Entrenador) {
-                System.out.println("8. Programar una sesión de entrenamiento");
-                System.out.println("9. Ver mis sesiones");
-                System.out.println("10. Registrar asistencia");
-                System.out.println("11. Registrar evaluación de desempeño");
-                System.out.println("12. Registrar tarjeta en un partido");
+                System.out.println("10. Programar una sesión de entrenamiento");
+                System.out.println("11. Ver mis sesiones");
+                System.out.println("12. Registrar asistencia");
+                System.out.println("13. Registrar evaluación de desempeño");
+                System.out.println("14. Registrar tarjeta en un partido");
                 maximo = 14;
             } else if (empleado instanceof Fisioterapeuta) {
                 System.out.println("10. Registrar evaluación física de un jugador");
