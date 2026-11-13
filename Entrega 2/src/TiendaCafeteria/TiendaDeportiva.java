@@ -5,15 +5,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import Excepciones.ClubException;
 import Usuarios.Usuario;
 import Usuarios.Empleado;
+import Torneos.BonoDescuento;
 
 public class TiendaDeportiva {
 
     //  Atributos 
     private static final double IVA = 0.19;        
     private List<Articulo> articulosDisponibles;
-    private List<Venta> ventas;
+    private List<Venta> ventas; 
 
     //  Constructor 
     public TiendaDeportiva() {
@@ -22,9 +25,16 @@ public class TiendaDeportiva {
     }
 
     public Venta vender(Usuario comprador, Map<Articulo, Integer> articulos,
-                        String codigo, int puntosACanjear, List<Empleado> empleados, LocalDate fecha) {
+                        String codigo, int puntosACanjear,
+                        List<Empleado> empleados, LocalDate fecha) throws ClubException {
+        return vender(comprador, articulos, codigo, puntosACanjear, null, empleados, fecha);
+    }
 
-        
+
+    public Venta vender(Usuario comprador, Map<Articulo, Integer> articulos,
+                        String codigo, int puntosACanjear, BonoDescuento bonoTorneo,
+                        List<Empleado> empleados, LocalDate fecha) throws ClubException {
+
         if (comprador == null) {
             throw new IllegalArgumentException("El comprador es obligatorio");
         }
@@ -51,28 +61,33 @@ public class TiendaDeportiva {
             subtotal += articulo.getPrecio() * cantidad;
         }
 
+        // Validación de exclusividad de descuentos (Restricción) 
         boolean hayCodigo = codigo != null && !codigo.isBlank();
-        if (hayCodigo && puntosACanjear > 0) {
-            throw new IllegalArgumentException("El descuento por código no se acumula con puntos");
-        }
-        if (puntosACanjear > 0 && !comprador.tienePuntosSuficientes(puntosACanjear)) {
-            throw new IllegalArgumentException("No hay suficientes puntos");
+        boolean usaPuntos = puntosACanjear > 0;
+        boolean usaBono = bonoTorneo != null;
+
+        int tiposDescuento = (hayCodigo ? 1 : 0) + (usaPuntos ? 1 : 0) + (usaBono ? 1 : 0);
+        if (tiposDescuento > 1) {
+            throw new ClubException("El bono de descuento de torneo recreativo no es acumulable con puntos ni con códigos de empleado.");
         }
 
-        
-        double porcentaje = 0;
+        double descuento = 0;
         if (hayCodigo) {
-            porcentaje = calcularDescuento(comprador, codigo, empleados);
-        }
-
-    
-        double descuento = subtotal * porcentaje;
-        if (puntosACanjear > 0) {
-        
+            double porcentaje = calcularDescuento(comprador, codigo, empleados);
+            descuento = subtotal * porcentaje;
+        } else if (usaPuntos) {
+            if (!comprador.tienePuntosSuficientes(puntosACanjear)) {
+                throw new ClubException("No hay suficientes puntos");
+            }
             int puntosUsados = (int) Math.min(puntosACanjear, Math.floor(subtotal));
             if (puntosUsados > 0) {
                 descuento = comprador.canjearPuntos(puntosUsados);
             }
+        }else if (usaBono) {
+            if (bonoTorneo.isUsado()) {
+                throw new ClubException("Este bono de descuento ya fue utilizado anteriormente.");
+            }
+            descuento = Math.min(bonoTorneo.getValor(), subtotal);
         }
 
         double iva = calcularIva(subtotal - descuento);
@@ -83,11 +98,16 @@ public class TiendaDeportiva {
         }
 
         Venta venta = new Venta(fecha, "TIENDA", subtotal, descuento, iva, 0, comprador);
+        
+      
+        if (usaBono) {
+            venta.aplicarBonoTorneo(bonoTorneo);
+        }
+
         ventas.add(venta);
         comprador.registrarCompra(venta);
         return venta;
     }
-
 
     // 15% al empleado dueño del código, 8% a otros
     public double calcularDescuento(Usuario comprador, String codigo, List<Empleado> empleados) {

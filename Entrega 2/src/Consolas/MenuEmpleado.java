@@ -265,7 +265,7 @@ public class MenuEmpleado {
             puntos = entrada.leerEntero("Puntos a usar: ", 1, empleado.getPuntosFidelidad());
         }
 
-        Venta venta = tienda.vender(empleado, carrito, codigo, puntos, club.getEmpleados(), LocalDate.now());
+        Venta venta = tienda.vender(empleado, carrito, codigo, puntos, null, club.getEmpleados(), LocalDate.now());
         System.out.println("Compra realizada.");
         System.out.println("Subtotal: $" + venta.getValor() + " | Descuento: $" + venta.getDescuento()
                 + " | IVA: $" + venta.getImpuesto());

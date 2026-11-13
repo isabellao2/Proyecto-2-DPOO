@@ -19,6 +19,12 @@ import Usuarios.Administrador;
 import Usuarios.Empleado;
 import Usuarios.Socio;
 import Usuarios.Turno;
+import DeporteIndividual.DisciplinaIndividual;
+import Torneos.InscripcionTorneo;
+import Torneos.Modalidad;
+import Torneos.TipoTorneo;
+import Torneos.Torneo;
+
 
 public class MenuAdministrador {
 
@@ -49,8 +55,15 @@ public class MenuAdministrador {
             System.out.println("10. Ver historial de reservas");
             System.out.println("11. Ver historial de partidos");
             System.out.println("12. Ver historial de entrenamientos");
+            System.out.println("13. Crear un torneo");
+            System.out.println("14. Ver torneos");
+            System.out.println("15. Inscribir un equipo en un torneo");
+            System.out.println("16. Iniciar un torneo");
+            System.out.println("17. Registrar un encuentro de un torneo");
+            System.out.println("18. Finalizar un torneo");
+            System.out.println("19. Ver historial de un torneo");
             System.out.println("0. Salir");
-            opcion = entrada.leerEntero("Opción: ", 0, 12);
+            opcion = entrada.leerEntero("Opción: ", 0, 19);
 
             try {
                 if (opcion == 1) {
@@ -75,8 +88,22 @@ public class MenuAdministrador {
                     verHistorialReservas();
                 } else if (opcion == 11) {
                     verHistorialPartidos();
-                } else if (opcion == 12) {
+                }else if (opcion == 12) {
                     verHistorialEntrenamientos();
+                } else if (opcion == 13) {
+                    crearTorneo();
+                } else if (opcion == 14) {
+                    verTorneos();
+                } else if (opcion == 15) {
+                    inscribirEquipoEnTorneo();
+                } else if (opcion == 16) {
+                    iniciarTorneo();
+                } else if (opcion == 17) {
+                    registrarEncuentro();
+                } else if (opcion == 18) {
+                    finalizarTorneo();
+                } else if (opcion == 19) {
+                    verHistorialTorneo();
                 }
             } catch (RuntimeException e) {
                 System.out.println("No se pudo completar: " + e.getMessage());
@@ -341,6 +368,200 @@ public class MenuAdministrador {
         }
         for (SesionesEntrenamiento s : lista) {
             System.out.println(s.getInicio() + " a " + s.getFin());
+        }
+    }
+
+     //Torneos
+
+    private void crearTorneo() {
+        String nombre = entrada.leerTexto("Nombre del torneo: ");
+
+        System.out.println("1. Recreativo (gratis, premio: bono)");
+        System.out.println("2. Competitivo (con tarifa, premio en efectivo)");
+        TipoTorneo tipo = TipoTorneo.recreativo;
+        if (entrada.leerEntero("Tipo: ", 1, 2) == 2) {
+            tipo = TipoTorneo.competitivo;
+        }
+
+        System.out.println("1. Deporte de conjunto (equipos)");
+        System.out.println("2. Individual");
+        System.out.println("3. Dobles (parejas)");
+        int m = entrada.leerEntero("Modalidad: ", 1, 3);
+        Modalidad modalidad = Modalidad.CONJUNTO;
+        if (m == 2) {
+            modalidad = Modalidad.INDIVIDUAL;
+        } else if (m == 3) {
+            modalidad = Modalidad.DOBLES;
+        }
+
+        String deporte;
+        String categoria;
+        if (modalidad == Modalidad.CONJUNTO) {
+            List<DeporteConjunto> deportes = new ArrayList<>(club.getDeportes());
+            for (int i = 0; i < deportes.size(); i++) {
+                System.out.println((i + 1) + ". " + deportes.get(i).getNombre());
+            }
+            deporte = deportes.get(entrada.leerEntero("Deporte: ", 1, deportes.size()) - 1).getNombre();
+
+            List<Categoria> categorias = new ArrayList<>(club.getCategorias());
+            for (int i = 0; i < categorias.size(); i++) {
+                System.out.println((i + 1) + ". " + categorias.get(i).getNombre());
+            }
+            categoria = categorias.get(entrada.leerEntero("Categoría: ", 1, categorias.size()) - 1).getNombre();
+        } else {
+            List<DisciplinaIndividual> disciplinas = new ArrayList<>(club.getDisciplinas());
+            for (int i = 0; i < disciplinas.size(); i++) {
+                System.out.println((i + 1) + ". " + disciplinas.get(i).getNombre());
+            }
+            deporte = disciplinas.get(entrada.leerEntero("Disciplina: ", 1, disciplinas.size()) - 1).getNombre();
+
+            System.out.println("1. Principiante");
+            System.out.println("2. Intermedio");
+            System.out.println("3. Avanzado");
+            int n = entrada.leerEntero("Nivel: ", 1, 3);
+            categoria = "Principiante";
+            if (n == 2) {
+                categoria = "Intermedio";
+            } else if (n == 3) {
+                categoria = "Avanzado";
+            }
+        }
+
+        int cupos = entrada.leerEntero("Número de cupos (equipos o jugadores): ", 2, 200);
+        double tarifa = 0;
+        if (tipo == TipoTorneo.competitivo) {
+            tarifa = entrada.leerDecimal("Tarifa de inscripción: ", 1);
+        }
+        LocalDate fecha = entrada.leerFecha("Fecha del torneo");
+
+         double valorBono = 0;
+        if (tipo == TipoTorneo.recreativo) {
+            valorBono = entrada.leerDecimal("Valor del bono para el ganador ($): ", 1);
+        }
+        
+        Torneo t = admin.crearTorneo(nombre, tipo, modalidad, deporte, categoria, cupos, tarifa, fecha, valorBono);
+        System.out.println("Torneo creado: " + t.getNombre() + ". Cupos preferenciales (20%): "
+                + t.getCuposPreferenciales());
+    }
+
+    private void verTorneos() {
+        List<Torneo> lista = admin.consultarTorneos();
+        if (lista.isEmpty()) {
+            System.out.println("No hay torneos.");
+            return;
+        }
+        for (int i = 0; i < lista.size(); i++) {
+            Torneo t = lista.get(i);
+            System.out.println((i + 1) + ". " + t.getNombre() + " | " + t.getTipo() + " | "
+                    + t.getModalidad() + " | " + t.getDeporte() + " " + t.getCategoria()
+                    + " | " + t.getFecha() + " | " + t.getEstado()
+                    + " | inscritos: " + t.getInscripciones().size() + "/" + t.getCupos());
+        }
+    }
+
+    // Devuelve el torneo elegido, o null si cancela
+    private Torneo elegirTorneo() {
+        List<Torneo> lista = admin.consultarTorneos();
+        if (lista.isEmpty()) {
+            System.out.println("No hay torneos.");
+            return null;
+        }
+        verTorneos();
+        int eleccion = entrada.leerEntero("Número de torneo (0 para cancelar): ", 0, lista.size());
+        if (eleccion == 0) {
+            return null;
+        }
+        return lista.get(eleccion - 1);
+    }
+
+    private void inscribirEquipoEnTorneo() {
+        Torneo torneo = elegirTorneo();
+        if (torneo == null) {
+            return;
+        }
+        List<Equipo> equipos = new ArrayList<>(club.getEquipos());
+        if (equipos.isEmpty()) {
+            System.out.println("No hay equipos.");
+            return;
+        }
+        for (int i = 0; i < equipos.size(); i++) {
+            System.out.println((i + 1) + ". " + equipos.get(i).getNombre());
+        }
+        int eleccion = entrada.leerEntero("Número de equipo (0 para cancelar): ", 0, equipos.size());
+        if (eleccion == 0) {
+            return;
+        }
+        // Torneo valida deporte, categoría y mínimo de jugadores
+        torneo.inscripcionEquipos(equipos.get(eleccion - 1), false);
+        System.out.println("Equipo inscrito.");
+    }
+
+    private void iniciarTorneo() {
+        Torneo torneo = elegirTorneo();
+        if (torneo == null) {
+            return;
+        }
+        admin.iniciarTorneo(torneo);
+        System.out.println("Torneo iniciado. Ya no admite inscripciones ni retiros.");
+    }
+
+    private void registrarEncuentro() {
+        Torneo torneo = elegirTorneo();
+        if (torneo == null) {
+            return;
+        }
+        String descripcion = entrada.leerTexto("Describe el encuentro y su resultado: ");
+        torneo.registrarEncuentro(descripcion);
+        System.out.println("Encuentro registrado.");
+    }
+
+    private void finalizarTorneo() {
+        Torneo torneo = elegirTorneo();
+        if (torneo == null) {
+            return;
+        }
+        List<InscripcionTorneo> inscritos = torneo.getInscripciones();
+        if (inscritos.isEmpty()) {
+            System.out.println("El torneo no tiene inscritos.");
+            return;
+        }
+        for (int i = 0; i < inscritos.size(); i++) {
+            System.out.println((i + 1) + ". " + inscritos.get(i).getNombre());
+        }
+        int eleccion = entrada.leerEntero("Número del ganador (0 para cancelar): ", 0, inscritos.size());
+        if (eleccion == 0) {
+            return;
+        }
+        InscripcionTorneo ganador = inscritos.get(eleccion - 1);
+        admin.finalizarTorneo(torneo, ganador.getParticipante(), ganador.getEquipo());
+        System.out.println("Torneo finalizado. Ganador: " + ganador.getNombre());
+        if (torneo.getTipo() == TipoTorneo.competitivo) {
+            System.out.println("Premio en efectivo: $" + torneo.calcularPremio());
+        }
+    }
+
+    private void verHistorialTorneo() {
+        Torneo torneo = elegirTorneo();
+        if (torneo == null) {
+            return;
+        }
+        System.out.println("=== " + torneo.getNombre() + " (" + torneo.getEstado() + ") ===");
+        System.out.println("--- Participantes ---");
+        for (InscripcionTorneo i : torneo.getInscripciones()) {
+            System.out.println("  " + i.getNombre() + " | cupo " + i.getTipoCupo()
+                    + " | pagó $" + i.getTarifaPagada());
+        }
+        System.out.println("--- Encuentros ---");
+        if (torneo.getHistorialEncuentros().isEmpty()) {
+            System.out.println("  (ninguno)");
+        }
+        for (String e : torneo.getHistorialEncuentros()) {
+            System.out.println("  " + e);
+        }
+        if (torneo.getGanador() != null) {
+            System.out.println("Ganador: " + torneo.getGanador().getLogin());
+        } else if (torneo.getEquipoGanador() != null) {
+            System.out.println("Ganador: " + torneo.getEquipoGanador().getNombre());
         }
     }
 }
