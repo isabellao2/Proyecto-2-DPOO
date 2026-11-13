@@ -62,10 +62,9 @@ public class PruebaReservaInstalacion {
                 System.out.println("1. Inscribirme en una disciplina");
                 System.out.println("2. Reservar una instalacion");
                 System.out.println("3. Ver mis reservas");
-                System.out.println("4. Simular compra de bebida caliente");
                 System.out.println("0. Salir");
 
-                int opcion = leerEntero(scanner, "Opcion", 0, 4);
+                int opcion = leerEntero(scanner, "Opcion", 0, 3);
 
                 if (opcion == 1) {
                     inscribir(scanner, datos, socio);
@@ -73,8 +72,6 @@ public class PruebaReservaInstalacion {
                     reservar(scanner, datos, socio);
                 } else if (opcion == 3) {
                     mostrarReservas(socio);
-                } else if (opcion == 4) {
-                    simularBebidaCaliente(scanner, socio);
                 } else {
                     salir = true;
                 }
@@ -85,7 +82,8 @@ public class PruebaReservaInstalacion {
         }
     }
 
-    //Opciones del menu
+    // ---------- Opciones del menu ----------
+
     private static void inscribir(Scanner scanner, Club datos, Socio socio) {
         List<DisciplinaIndividual> disciplinas = new ArrayList<DisciplinaIndividual>(datos.getDisciplinas());
         if (disciplinas.isEmpty()) {
@@ -126,8 +124,7 @@ public class PruebaReservaInstalacion {
         System.out.println("\nINSTALACIONES");
         for (int i = 0; i < instalaciones.size(); i++) {
             Instalacion ins = instalaciones.get(i);
-            System.out.println((i + 1) + ". " + ins.getNombre() + " | " + disciplinaDe(datos, ins)
-                    + (ins.restringeBebidaCaliente() ? " | restringe bebida caliente" : ""));
+            System.out.println((i + 1) + ". " + ins.getNombre() + " | " + disciplinaDe(datos, ins));
         }
         Instalacion instalacion = instalaciones.get(
                 leerEntero(scanner, "Instalacion", 1, instalaciones.size()) - 1);
@@ -172,16 +169,8 @@ public class PruebaReservaInstalacion {
         }
     }
 
-    private static void simularBebidaCaliente(Scanner scanner, Socio socio) {
-        LocalDate fecha = leerFecha(scanner, "Fecha de la compra (AAAA-MM-DD)");
-        LocalTime hora = leerHora(scanner, "Hora de la compra (HH:mm)");
-        socio.registrarBebidaCaliente(LocalDateTime.of(fecha, hora));
-        System.out.println("Compra de bebida caliente registrada el " + socio.getUltimaBebidaCaliente()
-                + ". Si reservas una instalacion restringida menos de "
-                + Socio.MINUTOS_VENTANA_BEBIDA + " minutos despues, sera rechazada.");
-    }
+    // ---------- Auxiliares ----------
 
-    // Lectura de datos
     private static String disciplinaDe(Club datos, Instalacion ins) {
         for (DisciplinaIndividual d : datos.getDisciplinas()) {
             if (d.tieneInstalacion(ins)) {
@@ -228,3 +217,4 @@ public class PruebaReservaInstalacion {
         }
     }
 }
+
