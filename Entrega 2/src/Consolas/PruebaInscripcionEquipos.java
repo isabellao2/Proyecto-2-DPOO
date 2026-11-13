@@ -45,7 +45,7 @@ public class PruebaInscripcionEquipos {
             }
 
             Socio socio = (Socio) usuario;
-            System.out.println("Bienvenido, " + socio.getLogin() + " (" + socio.getEdad() + " anos)");
+            System.out.println("Bienvenido, " + socio.getLogin() + " (" + socio.getEdad() + " años)");
 
             mostrarEquiposDelSocio(socio);
 
