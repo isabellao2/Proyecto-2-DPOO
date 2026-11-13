@@ -148,7 +148,7 @@ public class PruebaEntrenamiento {
                     String respuesta = scanner.nextLine();
 
                     if (!respuesta.equalsIgnoreCase("s")) {
-                        persistencia.guardaTodo(datos, ruta);
+                        persistencia.guardarTodo(datos, ruta);
                         return;
                     }
                 }
