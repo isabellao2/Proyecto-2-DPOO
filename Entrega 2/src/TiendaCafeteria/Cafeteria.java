@@ -1,148 +1,180 @@
 package TiendaCafeteria;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import Usuarios.Socio;
-import Usuarios.Usuario;
-import Usuarios.Administrador;
-import DeporteIndividual.Reserva;
-import DeporteIndividual.Instalacion;
 
 public class Cafeteria {
+
+	// Atributos
+	private List<Bebida> bebidas;
+	private List<Snack> snacks;
+	private List<Venta> ventas;
+
+	public static final double IMPUESTO_CONSUMO = 0.08;
+	public static final double PROPINA_SUGERIDA = 0.10;
+
+	// Constructor
+	public Cafeteria() {
+		this.bebidas = new ArrayList<>();
+		this.snacks = new ArrayList<>();
+		this.ventas = new ArrayList<>();
+	}
+
 	
-	// Atributos 
-	
-    private List<Bebida> bebidas;
-    private List<Snack> snacks;
-    private List<Venta> ventas;
+	public Venta vender(Socio comprador, List<Bebida> bebidasAComprar, List<Snack> snacksAComprar,
+			double propina, boolean alergenosConfirmados, LocalDateTime momento) {
+
+
+		if (comprador == null) {
+			throw new IllegalArgumentException("El comprador es obligatorio");
+		}
+		if (momento == null) {
+			throw new IllegalArgumentException("El momento de la venta es obligatorio");
+		}
+		if (propina < 0) {
+			throw new IllegalArgumentException("La propina no puede ser negativa");
+		}
+
+		List<Bebida> bebidas = bebidasAComprar;
+		if (bebidas == null) {
+			bebidas = new ArrayList<>();
+		}
+		List<Snack> snacks = snacksAComprar;
+		if (snacks == null) {
+			snacks = new ArrayList<>();
+		}
+		if (bebidas.isEmpty() && snacks.isEmpty()) {
+			throw new IllegalArgumentException("Debe incluir al menos un producto");
+		}
+
+		for (Bebida b : bebidas) {
+			if (b == null || !bebidas.contains(b)) {
+				throw new IllegalArgumentException("Bebida no disponible en la cafetería");
+			}
+		}
+		for (Snack s : snacks) {
+			if (s == null || !snacks.contains(s)) {
+				throw new IllegalArgumentException("Snack no disponible en la cafetería");
+			}
+		}
+
+		// Restriccion de la bebida caliente
+		boolean hayCaliente = false;
+		for (Bebida b : bebidas) {
+			if (!puedeDespachar(b, comprador, momento)) {
+				throw new IllegalArgumentException(
+						"No se puede despachar bebida caliente a un socio que está en una instalación restringida");
+			}
+			if (b.isCaliente()) {
+				hayCaliente = true;
+			}
+		}
+
+		// Alérgenos se informan al socio 
+		List<String> avisos = informarAlergenos(snacks);
+		if (!avisos.isEmpty() && !alergenosConfirmados) {
+			String mensaje = "El socio debe confirmar los alérgenos: ";
+			for (String aviso : avisos) {
+				mensaje += aviso + ". ";
+			}
+			throw new IllegalStateException(mensaje);
+		}
+
+		// Totales
+		double subtotal = 0.0;
+		for (Bebida b : bebidas) {
+			subtotal += b.getPrecio();
+		}
+		for (Snack s : snacks) {
+			subtotal += s.getPrecio();
+		}
+		double impuesto = calcularImpuestoConsumo(subtotal);
+
+		// Crear la venta y actualiza el estado
+		Venta venta = new Venta(momento.toLocalDate(), "CAFETERIA", subtotal, 0.0, impuesto, propina, comprador);
+
+		if (hayCaliente) {
+			comprador.registrarBebidaCaliente(momento);
+		}
+		comprador.registrarCompra(venta);
+		ventas.add(venta);
+		return venta;
+	}
+
+	// Restriccion de bebida caliente
+	public boolean puedeDespachar(Bebida b, Socio s, LocalDateTime momento) {
+		if (!b.isCaliente()) {
+			return true;
+		}
+		return !s.estaEnInstalacionRestringida(momento);
+	}
+
+	// Metodos de Impuesto y propina
+	public double calcularImpuestoConsumo(double subtotal) {
+		return subtotal * IMPUESTO_CONSUMO;
+	}
+
+	public double calcularPropinaSugerida(double subtotal) {
+		return subtotal * PROPINA_SUGERIDA;
+	}
+
+	public List<String> informarAlergenos(List<Snack> snacksAComprar) {
+		List<String> reporteAlergenos = new ArrayList<>();
+
+		if (snacksAComprar != null) {
+			for (Snack s : snacksAComprar) {
+				if (s != null && s.tieneAlergenos()) {
+					reporteAlergenos.add("El snack " + s.getNombre() + " contiene alérgenos: " + s.getAlergenos());
+				}
+			}
+		}
+
+		return reporteAlergenos;
+	}
+
+	// Bebidas y snacks 
+	public void agregarBebida(Bebida b) {
+		if (b != null) {
+			this.bebidas.add(b);
+		}
+	}
+
+	public void agregarSnack(Snack s) {
+		if (s != null) {
+			this.snacks.add(s);
+		}
+	}
     
-    public static final double IMPUESTO_CONSUMO = 0.08; 
-    public static final double PROPINA_SUGERIDA = 0.10;  
+	// Reportes de ventas por periodo
+	public List<Venta> getVentasEntre(LocalDate desde, LocalDate hasta) {
+		List<Venta> resultado = new ArrayList<>();
+		for (Venta v : ventas) {
+			if (!v.getFecha().isBefore(desde) && !v.getFecha().isAfter(hasta)) {
+				resultado.add(v);
+			}
+		}
+		return resultado;
+	}
 
-    	// constructor 
-    public Cafeteria() {
-        this.bebidas = new ArrayList<>();
-        this.snacks = new ArrayList<>();
-        this.ventas = new ArrayList<>();
-    }
+	public List<Bebida> getBebidas() {
+		return new ArrayList<>(bebidas);
+	}
 
-    //Metodos
-    
-    public Venta vender(Socio comprador, List<Bebida> bebidas, List<Snack> snacks, double propina) {
-        if (comprador == null)
-            throw new IllegalArgumentException("El comprador es obligatorio");
-        boolean sinBebidas = bebidas == null || bebidas.isEmpty();
-        boolean sinSnacks = snacks == null || snacks.isEmpty();
-        if (sinBebidas && sinSnacks)
-            throw new IllegalArgumentException("Debe incluir al menos un producto");
-        if (propina < 0)
-            throw new IllegalArgumentException("La propina no puede ser negativa");
+	public List<Snack> getSnacks() {
+		return new ArrayList<>(snacks);
+	}
 
-        
-        boolean hayCaliente = false;
-        if (!sinBebidas) {
-            for (Bebida b : bebidas) {
-                if (!puedeDespachar(b, comprador))
-                    throw new IllegalArgumentException(
-                        "No se puede despachar bebida caliente dentro de esta instalación");
-                if (b.isCaliente()) hayCaliente = true;
-            }
-        }
+	public List<Venta> getVentas() {
+		return new ArrayList<>(ventas);
+	}
 
-        double subtotal = 0.0;
-        if (!sinBebidas) for (Bebida b : bebidas) subtotal += b.getPrecio();
-        if (!sinSnacks)  for (Snack s : snacks)   subtotal += s.getPrecio();
-
-        double impuesto = calcularImpuestoConsumo(subtotal);
-
-        Venta venta = new Venta(LocalDate.now(), "CAFETERIA", subtotal, 0.0, impuesto, propina, comprador);
-
-        if (hayCaliente) comprador.setBebidaCalienteActiva(true); // revisar como solucionar
-        comprador.registrarCompra(venta);   
-        ventas.add(venta); 
-        return venta;
-    }
-
-    public boolean puedeDespachar(Bebida b, Socio s) {
-        return !(b.isCaliente() && s.estaEnInstalacionSinBebidaCaliente());
-    }
-
-       
-    public double calcularImpuestoConsumo(double subtotal) {
-        return subtotal * IMPUESTO_CONSUMO;
-    }
-
-    public double calcularPropinaSugerida(double subtotal) {
-        return subtotal * PROPINA_SUGERIDA;
-    }
-    
-    public void agregarBebida(Bebida b) {
-    	if (b != null) {
-            this.bebidas.add(b);
-        }    
-    }
-
-    public void agregarSnack(Snack s) {
-    	if (s != null) {
-            this.snacks.add(s);
-        }
-    }
-
-    public List<String> informarAlergenos(List<Snack> snacksAComprar) {
-    	List<String> reporteAlergenos = new ArrayList<>();
-        
-        if (snacksAComprar != null) {
-            for (Snack s : snacksAComprar) {
-                if (s != null && s.tieneAlergenos()) {
-                    reporteAlergenos.add("El snack " + s.getNombre() + " contiene alérgenos: " + s.getAlergenos());
-                }
-            }
-        }
-        
-        return reporteAlergenos;
-    }   
-    
-    public boolean estaEnInstalacionSinBebidaCaliente( Socio comprador, List<Bebida> bebidasAComprar) {
-    	if (comprador == null) {
-            return false;
-        }
-        if (comprador.isBebidaCalienteActiva()) {
-            return false; 
-        }
-
-        boolean incluyeBebidaCaliente = false;
-        if (bebidasAComprar != null) {
-            for (Bebida b : bebidasAComprar) {
-                if (b != null && b.isCaliente()) { 
-                    incluyeBebidaCaliente = true;
-                    break;
-                }
-            }
-        }
-        if (incluyeBebidaCaliente) {
-  
-            for (Reserva r : comprador.getReservas()) { 
-                if (r != null && r.getInstalacion() != null) {
-                    String nombreInstalacion = r.getInstalacion().getNombre().toLowerCase();
-                   
-                    if (nombreInstalacion.contains("padel") || nombreInstalacion.contains("tenis de mesa")) {
-                    	return false; 
-                    }
-                }
-            }
-        }
-
-        return true; 
-    }
-
-    public List<Bebida> getBebidas() {
-        return bebidas;
-    }
-
-    public List<Snack> getSnacks() {
-        return snacks;
-    }
-    
+	// persistencia
+	public void cargarVentaGuardada(Venta v) {
+		if (v != null) {
+			ventas.add(v);
+		}
+	}
 }

@@ -11,6 +11,8 @@ public class Venta {
     private double valor;
     private double descuento;
     private Usuario comprador;
+// nuevo atributo 
+    public static final double TASA_PUNTOS = 0.02;
 
     	// constructor
     public Venta(LocalDate fecha, String rubro, double valor, double descuento, double impuesto, double propina, Usuario comprador) {
@@ -22,23 +24,21 @@ public class Venta {
         this.propina = propina;
         this.comprador = comprador;
     }
-    
-    
 
     public double calcularTotal() {
         return (this.valor + this.impuesto + this.propina) - this.descuento;
     }
 
-    public int calcularPuntosFidelidad(double valorTotal) {
-        return (int) (valorTotal * 0.02); 
+    public int calcularPuntosFidelidad() {
+        return (int) ((valor - descuento) * TASA_PUNTOS);
     }
 
     public boolean esRubro(String rubroBuscado) {
-    	if (rubroBuscado == null || this.rubro == null) {
-        return false;
+        if (rubroBuscado == null || this.rubro == null) {
+            return false;
+        }
+        return this.rubro.equalsIgnoreCase(rubroBuscado);
     }
-    return this.rubro.equalsIgnoreCase(rubroBuscado);
-}
     
     // getters y setters 
 
@@ -54,39 +54,23 @@ public class Venta {
     public Usuario getComprador() {
     	return comprador; 
     	}
-    public void setComprador(Usuario comprador) {
-    	this.comprador = comprador; 
-    	}
-
-
-
-    public double getImpuesto() {
+      public double getImpuesto() {
         return impuesto;
     }
-
-
-
-    public void setImpuesto(double impuesto) {
-        this.impuesto = impuesto;
-    }
-
-
-
-    public double getPropina() {
+      public double getPropina() {
         return propina;
     }
-
-
-
     public double getDescuento() {
         return descuento;
     }
-
-
-
+    public void setComprador(Usuario comprador) {
+    	this.comprador = comprador; 
+    	}
+    public void setImpuesto(double impuesto) {
+        this.impuesto = impuesto;
+    }
     public void setDescuento(double descuento) {
         this.descuento = descuento;
     }
     
 }
-

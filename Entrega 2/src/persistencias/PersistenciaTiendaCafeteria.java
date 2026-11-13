@@ -7,8 +7,8 @@ import TiendaCafeteria.*;
 
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.FileWriter;
 
 import java.io.IOException;
@@ -129,10 +129,17 @@ public class PersistenciaTiendaCafeteria {
                 double impuesto = Double.parseDouble(partes[4]);
                 double propina = Double.parseDouble(partes[5]);
                 double descuento = Double.parseDouble(partes[6]);
-                int puntosRedimidos = Integer.parseInt(partes[7]);
                 Usuario comprador = seneca.buscarUsuario(loginComprador);
                 Venta nuevaVenta = new Venta(fecha, rubro, valor, descuento, impuesto, propina, comprador);
-                seneca.agregarVenta(nuevaVenta);
+                if (comprador == null) { // cambio 
+                    throw new PersistenciaException("Hay una venta de un usuario que no existe: " + loginComprador);
+                }
+                comprador.cargarCompraGuardada(nuevaVenta);
+                if (rubro.equalsIgnoreCase("TIENDA")) {
+                    seneca.getTienda().cargarVentaGuardada(nuevaVenta);
+                } else if (rubro.equalsIgnoreCase("CAFETERIA")) {
+                    seneca.getCafeteria().cargarVentaGuardada(nuevaVenta);
+                }
 
                 }
             }
@@ -183,9 +190,12 @@ public class PersistenciaTiendaCafeteria {
                 if (s.getAlergenos().isEmpty()){
                     linea += "NINGUNO";
                 }
-                else{
-                    for (String alergeno : s.getAlergenos()){
-                        linea += alergeno + COMA;
+                 else{ // cambio
+                    for (int i = 0; i < s.getAlergenos().size(); i++){
+                        if (i > 0){
+                            linea += COMA;
+                        }
+                        linea += s.getAlergenos().get(i);
                     }
                 }
                 escritor.println(linea);
@@ -197,7 +207,10 @@ public class PersistenciaTiendaCafeteria {
     private void guardarVentas(Club seneca, String carpeta) throws IOException, PersistenciaException{
         String ruta = carpeta + "/" + ARCHIVO_VENTAS;
         try(PrintWriter escritor = new PrintWriter(new FileWriter(ruta))){ 
-            for (Venta v : seneca.getVentas()){
+            List<Venta> todas = new ArrayList<>();
+            todas.addAll(seneca.getTienda().getVentas()); // cambio 
+            todas.addAll(seneca.getCafeteria().getVentas());
+            for (Venta v : todas){
                 String linea = v.getComprador().getLogin() + SEPARADOR + v.getRubro() + SEPARADOR + v.getFecha()
                         + SEPARADOR + v.getValor() + SEPARADOR + v.getImpuesto() + SEPARADOR + v.getPropina()
                         + SEPARADOR + v.getDescuento() + SEPARADOR + "0" + SEPARADOR + "0.0";

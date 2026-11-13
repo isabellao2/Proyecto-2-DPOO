@@ -88,9 +88,17 @@ public class Instalacion {
         return false;
     }
 
-    public boolean restringeBebidaCaliente() {
-        return techada;
+    //Nuevo metodo
+   public boolean restringeBebidaCaliente() {
+    String t = tipo.toLowerCase();
+    if (t.contains("padel") || t.contains("pádel")) {
+        return true;              // pádel: siempre restringido
     }
+    if (t.contains("mesa")) {
+        return techada;           // mesa de tenis de mesa: solo si es techada
+    }
+    return false;                 // tenis: nunca mencionan
+}
 
     public String getNombre() {
         return nombre;

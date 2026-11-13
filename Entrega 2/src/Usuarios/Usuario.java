@@ -9,8 +9,7 @@ import TiendaCafeteria.Venta;
 
 public abstract class Usuario {
 	
-	public static final int pesos_punto = 1000;
-	public static final double valor_punto = 50.0;
+	public static final double VALOR_PUNTO = 1; // CAMBIO 
 
 	private String login;
 	private String contraseña;
@@ -25,7 +24,6 @@ public abstract class Usuario {
 		this.puntosFidelidad = 0;
 		this.historialdecompras = new ArrayList<>();
 	}
-
 
 	public String getContraseña() {
 		return contraseña;
@@ -71,17 +69,15 @@ public abstract class Usuario {
 	public List<Venta> getHistorialCompras() {
 		return Collections.unmodifiableList(historialdecompras);
 	}
-	public void setHistorialCompras() {
-		this.historialdecompras = historialdecompras;
-	}
 	
 	public boolean verificar (String login, String contraseña) {
 		return this.login.equals(login) && this.contraseña.equals(contraseña);
 	}
 	
-	public void acumularPuntos (double valorVenta) {
-		if (valorVenta >0) {
-			puntosFidelidad += (valorVenta / pesos_punto);}
+	// Punto de fidelidad CafeteriaTienda
+	public void acumularPuntos (int punto) {
+		if (punto >0) {
+			puntosFidelidad += punto;}
 	}
 	public boolean tienePuntosSuficientes (int puntos) {
 		if (puntos > 0 && puntosFidelidad >= puntos) {
@@ -99,15 +95,20 @@ public abstract class Usuario {
 					+ " puntos y quieres redimir " + puntos);
 		}
 		puntosFidelidad -= puntos;
-		return (int) ((puntos) * (valor_punto));
+		return (int) ((puntos) * (VALOR_PUNTO));
 	}
 	
-	public void registrarCompra(Venta v) {
+	public void registrarCompra(Venta v) throws ClubException {
 		if (v == null) {
 			throw new ClubException("no hay una venta para registrar.");
 		}
 		historialdecompras.add(v);
-		acumularPuntos(v.calcularTotal());
+		acumularPuntos(v.calcularPuntosFidelidad());
 	}
 
+	public void cargarCompraGuardada(Venta v) {
+		if (v != null) {
+			historialdecompras.add(v);
+		}
+	}
 }

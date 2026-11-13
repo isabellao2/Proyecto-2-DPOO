@@ -61,8 +61,9 @@ public abstract class Empleado extends Usuario{
 			if (t.coincideCon(dia, hora)) {
 				return true;
             }
-			}
-			return false;}}
+		}
+		return false;  
+    }
 
     public void solicitarCambioTurno(Turno actual, Turno nuevo) throws ClubException {
         if (actual == null || !turnos.contains(actual)) {
@@ -99,8 +100,12 @@ public abstract class Empleado extends Usuario{
         return codigoDescuento;
     }
 
+    //cambio 
     public double getPorcentajeDescuento(Usuario comprador) {
-        return comprador instanceof Empleado ? descuento_empleado : descuento_socio;
+          if (comprador == this) {
+            return descuento_empleado;   // el empleado usa su propio código: 15%
+        }
+        return descuento_socio;          // cualquier otro usa el código compartido: 8%
     }
 
     public List<Turno> getTurnos() {

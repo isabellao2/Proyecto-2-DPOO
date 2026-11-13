@@ -1,9 +1,7 @@
 package Usuarios;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import DeporteConjunto.ComposicionEquipo;
@@ -24,13 +22,15 @@ public class Socio extends Usuario {
 
    private final int edad;
    private boolean fisicoApto;
-   private boolean bebidaCalienteActiva;
    private final List<ComposicionEquipo> composicion;
    private final List<InscripcionIndividual> inscripciones;
    private final List<PuntajeRanking> rankings;
    private final List<Reserva> reservas;
    private final List<Partido> partidos;
    private final List<PartidoPractica> partidosPractica;
+
+   public static final int MINUTOS_VENTANA_BEBIDA = 30;
+   private LocalDateTime ultimaBebidaCaliente;  
 
    public Socio(String login, String contrasena, int edad) throws ClubException {
 	      super(login, contrasena);
@@ -39,14 +39,15 @@ public class Socio extends Usuario {
 	        }
 	        this.edad = edad;
 	        this.fisicoApto = true;
-	        this.bebidaCalienteActiva = false;
 	        this.composicion = new ArrayList<>();
 	        this.inscripciones = new ArrayList<>();
 	        this.rankings = new ArrayList<>();
 	        this.reservas = new ArrayList<>();
 	        this.partidos = new ArrayList<>();
             this.partidosPractica = new ArrayList<>();
+            this.ultimaBebidaCaliente = null; // nuevo
 	    }
+
 
    public boolean isFisicoApto() {
 	return fisicoApto;
@@ -54,14 +55,6 @@ public class Socio extends Usuario {
 
    public void setFisicoApto(boolean fisicoApto) {
 	this.fisicoApto = fisicoApto;
-   }
-
-   public boolean isBebidaCalienteActiva() {
-	return bebidaCalienteActiva;
-   }
-
-   public void setBebidaCalienteActiva(boolean bebidaCalienteActiva) {
-	this.bebidaCalienteActiva = bebidaCalienteActiva;
    }
 
    public int getEdad() {
@@ -151,13 +144,12 @@ public class Socio extends Usuario {
        if (d == null || !d.estaInscrito(this)) {
            throw new ClubException("Primero debes inscribirte en la disciplina para programar una práctica.");
        }
-       PartidoPractica partido = new PartidoPractica(d, this, rival, inicio.toLocalDate());
-       reservarInstalacion(i, inicio, fin, 2, "SENCILLOS");
+        reservarInstalacion(i, inicio, fin, 2, "SENCILLOS");
+       PartidoPractica partido = new PartidoPractica(d, this, rival, inicio.toLocalDate()); // cambio 
        partidosPractica.add(partido);
        return partido;
    }
 
-   
    public PuntajeRanking obtenerRanking (DisciplinaIndividual d) throws ClubException {
 	   for (PuntajeRanking r: rankings) {
 		   if (r.getDisciplina()==d) {
@@ -206,6 +198,10 @@ public class Socio extends Usuario {
 	   if (inicio == null || fin == null || !inicio.isBefore(fin)) {
 		   throw new ClubException("El horario de la reserva no es válido");
 	   }
+       if (i.restringeBebidaCaliente() && tuvoBebidaCalienteReciente(inicio)) {
+			throw new ClubException("No puedes reservar " + i.getNombre()
+					+ ": compraste una bebida caliente hace menos de " + MINUTOS_VENTANA_BEBIDA + " minutos.");
+		}
 	   if (!i.aceptaModalidad(modalidad, numeroJugadores)) {
 		   throw new ClubException("La instalación " + i.getNombre() + " no admite la modalidad "
 				   + modalidad + " con " + numeroJugadores + " jugadores");
@@ -247,18 +243,7 @@ public class Socio extends Usuario {
 	    }
 	    this.fisicoApto = apto;
 	}
-
-	public boolean estaEnInstalacionSinBebidaCaliente() {
-	    LocalDateTime ahora = LocalDateTime.now();
-	    for (Reserva r : reservas) {
-	        if (!ahora.isBefore(r.getInicio()) && ahora.isBefore(r.getFin())) {
-	            return !bebidaCalienteActiva;
-	        }
-	    }
-	    return false;
-	}
    
-
 	public void registrarComposicion(ComposicionEquipo c) {
 		if (c != null && !composicion.contains(c)) {
         composicion.add(c);
@@ -272,8 +257,45 @@ public class Socio extends Usuario {
 	public void registrarPartido(Partido p) {
 		if (p != null && !partidos.contains(p)) {
 			partidos.add(p);
+        }
     }
+
+    // NUEVOS METODOS Cafeteria 
+    public void registrarBebidaCaliente(LocalDateTime momento) {
+        this.ultimaBebidaCaliente = momento;
+    }
+
+    public LocalDateTime getUltimaBebidaCaliente() {
+        return ultimaBebidaCaliente;
+    }
+
+    public void setUltimaBebidaCaliente(LocalDateTime momento) {
+        this.ultimaBebidaCaliente = momento;  
+    }
+
+    public boolean estaEnInstalacionRestringida(LocalDateTime momento) {
+        LocalDateTime limite = momento.plusMinutes(MINUTOS_VENTANA_BEBIDA);
+            for (Reserva r : reservas) {
+                if (r.getInstalacion().restringeBebidaCaliente()) {
+                    boolean activa = r.estaActivaEn(momento);
+                    boolean empiezaPronto = r.getInicio().isAfter(momento)
+                                    && !r.getInicio().isAfter(limite);
+                 if (activa || empiezaPronto) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
+
+    public boolean tuvoBebidaCalienteReciente(LocalDateTime inicioReserva) {
+        if (ultimaBebidaCaliente == null) {
+            return false;
+    }
+    LocalDateTime desde = inicioReserva.minusMinutes(MINUTOS_VENTANA_BEBIDA);
+    return ultimaBebidaCaliente.isAfter(desde)
+           && !ultimaBebidaCaliente.isAfter(inicioReserva);
+        }
 	}
 
 
