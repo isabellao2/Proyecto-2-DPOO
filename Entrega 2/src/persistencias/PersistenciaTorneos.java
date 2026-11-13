@@ -98,7 +98,7 @@ public class PersistenciaTorneos {
                 for (InscripcionTorneo i : t.getInscripciones()) {
                     inscripciones.println(t.getNombre() + SEPARADOR
                             + (i.getParticipante() == null ? VACIO : i.getParticipante().getLogin()) + SEPARADOR
-                            + (i.getPareja() == null ? VACIO : i.getPareja().getLogin()) + SEPARADOR
+                            + (i.getCompañero() == null ? VACIO : i.getCompañero().getLogin()) + SEPARADOR
                             + (i.getEquipo() == null ? VACIO : i.getEquipo().getNombre()) + SEPARADOR
                             + i.getTipoCupo() + SEPARADOR + i.getTarifaPagada());
                 }

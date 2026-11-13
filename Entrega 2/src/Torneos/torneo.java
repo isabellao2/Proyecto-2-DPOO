@@ -309,6 +309,20 @@ public class Torneo {
                 }
                 return Math.max(0, getCuposPreferenciales() - conteoCupos(TipoCupo.preferencial));
             }
+    // Nuevo para persistencia 
+             public void restaurarEstado(EstadoTorneo estadoGuardado) {
+                this.estado = estadoGuardado;
+                if (estadoGuardado != EstadoTorneo.EN_INSCRIPCION) {
+            this.preferencialLiberados = true;
+        }
+    }
+
+    // Nuevo para persistencia 
+            public void restaurarInscripcion(InscripcionTorneo inscripcion) {
+                if (inscripcion != null) {
+                inscripciones.add(inscripcion);
+        }
+    }
                 }
 
 
