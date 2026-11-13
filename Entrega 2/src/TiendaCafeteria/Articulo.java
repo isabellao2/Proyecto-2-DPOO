@@ -5,7 +5,7 @@ public class Articulo {
     private String categoria;
     private double precio;
     private int cantidadDisponible;
-     private String ubicacion = "Principal";
+    private String ubicacion = "Principal";
 
     public Articulo(String nombre, String categoria, double precio, int cantidadDisponible) {
         this.nombre = nombre;
