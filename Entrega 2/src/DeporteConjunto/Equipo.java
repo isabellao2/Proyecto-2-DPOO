@@ -87,9 +87,6 @@ public class Equipo {
     return lista;
 }
 
-    }
-
-    
     public boolean puedeAceptar(Socio s, int numeroCamiseta) throws ClubException {
         if (s == null) {
             throw new ClubException("Necesitamos al socio que quiere unirse al equipo.");
@@ -191,3 +188,4 @@ public class Equipo {
         return nombre;
     }
 }
+
