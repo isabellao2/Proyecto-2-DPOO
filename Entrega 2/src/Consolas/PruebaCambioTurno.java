@@ -18,9 +18,8 @@ public class PruebaCambioTurno {
 
 	public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-
-        try {
+         try (Scanner scanner = new Scanner(System.in)) {
+            
             System.out.println("CAMBIO DE TURNO DE EMPLEADOS");
 
             System.out.print("Enter para usar datos: ");
@@ -179,6 +178,6 @@ public class PruebaCambioTurno {
             System.out.println("Ocurrio un error: " + e.getMessage());
         }
 
-        scanner.close();
+      
     }
 }
