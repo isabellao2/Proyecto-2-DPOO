@@ -63,7 +63,7 @@ public class Cafeteria {
 
 		// Restriccion de la bebida caliente
 		boolean hayCaliente = false;
-		for (Bebida b : bebidas) {
+		for (Bebida b : bs) {
 			if (!puedeDespachar(b, comprador, momento)) {
 				throw new IllegalArgumentException(
 						"No se puede despachar bebida caliente a un socio que está en una instalación restringida");
@@ -74,7 +74,7 @@ public class Cafeteria {
 		}
 
 		// Alérgenos se informan al socio 
-		List<String> avisos = informarAlergenos(snacks);
+		List<String> avisos = informarAlergenos(ss);
 		if (!avisos.isEmpty() && !alergenosConfirmados) {
 			String mensaje = "El socio debe confirmar los alérgenos: ";
 			for (String aviso : avisos) {
@@ -85,10 +85,10 @@ public class Cafeteria {
 
 		// Totales
 		double subtotal = 0.0;
-		for (Bebida b : bebidas) {
+		for (Bebida b : bs) {
 			subtotal += b.getPrecio();
 		}
-		for (Snack s : snacks) {
+		for (Snack s : ss) {
 			subtotal += s.getPrecio();
 		}
 		double impuesto = calcularImpuestoConsumo(subtotal);
