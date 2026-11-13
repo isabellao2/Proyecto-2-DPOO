@@ -75,5 +75,56 @@ class TorneoTest {
         coach.agregarTurno(new Usuarios.Turno(coach, DayOfWeek.MONDAY, LocalTime.of(8, 0)));
         assertThrows(ClubException.class, () -> competitivo.inscribirElJugador(coach, null, false));
     }
+    @Test
+    void CupoPreferencialSinEstarRanking() {
+        Torneo t = new Torneo("P", TipoTorneo.recreativo, Modalidad.INDIVIDUAL, "Tenis", "Avanzado", 2, 0,
+                LUNES);
+        t.inscribirElJugador(socio1, null, false);
+        assertThrows(ClubException.class, () -> t.inscribirElJugador(socio2, null, false));
+        assertEquals(TipoCupo.preferencial, t.inscribirElJugador(socio2, null, true).getTipoCupo());
+    }
+    @Test
+    void noSeIniciaConMenosDeDosInscritos() {
+        competitivo.inscribirElJugador(socio1, null, false);
+        assertThrows(ClubException.class, () -> competitivo.iniciar());
+    }
+ 
+    @Test
+    void dobleDebeTenerCompaniero() {
+        Torneo dobles = new Torneo("D", TipoTorneo.recreativo, Modalidad.DOBLES, "Tenis", "Avanzado", 4, 0,
+                LUNES);
+        assertThrows(ClubException.class, () -> dobles.inscribirElJugador(socio1, null, false));
+        dobles.inscribirElJugador(socio1, socio2, false);
+        assertTrue(dobles.estaInscrito(socio2));
+    }
+    @Test
+    void CancelarSalidoTorneoIniciado() {
+        competitivo.inscribirElJugador(socio1, null, false);
+        competitivo.inscribirElJugador(socio2, null, false);
+        competitivo.iniciar();
+        assertThrows(ClubException.class, () -> competitivo.inscribirElJugador(socio3, null, false));
+        assertThrows(ClubException.class, () -> competitivo.retirarJugador(socio1));
+    }
+    @Test
+    void equipoDebeCumplirMinimoDeJugadoresYNoSeRepite() {
+        Equipo eq = new Equipo("Águilas", DeporteConjunto.futbol(), Categoria.MAYORES, 12);
+        Torneo conj = new Torneo("Mini", TipoTorneo.recreativo, Modalidad.CONJUNTO, "Fútbol", "Mayores", 4,
+                0, LUNES);
+        assertThrows(ClubException.class, () -> conj.inscripcionEquipos(eq, false));
+        for (int i = 1; i <= 7; i++) {
+            new Socio("j" + i, "x", 20).inscribirseEnEquipo(eq, "Delantero", i);
+        }
+        conj.inscripcionEquipos(eq, false);
+        assertTrue(conj.estaInscrito(eq));
+        assertThrows(ClubException.class, () -> conj.inscripcionEquipos(eq, false));
+    }
+    @Test
+    void PreferencialesSobrantesPasanARegulares() {
+        competitivo.inscribirElJugador(socio1, null, false);
+        competitivo.inscribirElJugador(socio2, null, false);
+        assertEquals(2, competitivo.getCuposRegularesLibres());
+        competitivo.iniciar();
+        assertEquals(3, competitivo.getCuposRegularesLibres());
+    }
     }
     
