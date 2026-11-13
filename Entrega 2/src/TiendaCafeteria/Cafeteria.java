@@ -38,27 +38,27 @@ public class Cafeteria {
 			throw new IllegalArgumentException("La propina no puede ser negativa");
 		}
 
-		List<Bebida> bebidas = bebidasAComprar;
-		if (bebidas == null) {
-			bebidas = new ArrayList<>();
+		List<Bebida> bs = bebidasAComprar;
+		if (bs == null) {
+    		bs = new ArrayList<>();
 		}
-		List<Snack> snacks = snacksAComprar;
-		if (snacks == null) {
-			snacks = new ArrayList<>();
+		List<Snack> ss = snacksAComprar;
+		if (ss == null) {
+    	ss = new ArrayList<>();
 		}
-		if (bebidas.isEmpty() && snacks.isEmpty()) {
-			throw new IllegalArgumentException("Debe incluir al menos un producto");
-		}
+		if (bs.isEmpty() && ss.isEmpty()) {
+    	throw new IllegalArgumentException("Debe incluir al menos un producto");
+		}	
 
-		for (Bebida b : bebidas) {
-			if (b == null || !bebidas.contains(b)) {
-				throw new IllegalArgumentException("Bebida no disponible en la cafetería");
-			}
+		for (Bebida b : bs) {
+    	if (b == null || !bebidas.contains(b)) {
+        throw new IllegalArgumentException("Bebida no disponible en la cafetería");
+    		}
 		}
-		for (Snack s : snacks) {
-			if (s == null || !snacks.contains(s)) {
-				throw new IllegalArgumentException("Snack no disponible en la cafetería");
-			}
+		for (Snack s : ss) {
+    	if (s == null || !snacks.contains(s)) {
+        throw new IllegalArgumentException("Snack no disponible en la cafetería");
+    		}
 		}
 
 		// Restriccion de la bebida caliente
