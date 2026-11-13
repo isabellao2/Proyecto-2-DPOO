@@ -47,6 +47,7 @@ public class PersistenciaTurnos {
             }
     
         }
+        cargarSolicitudes(club, carpeta);
     }
 
         private void cargarSolicitudes(Club club, String carpeta) throws IOException, PersistenciaException {

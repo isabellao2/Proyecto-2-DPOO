@@ -50,6 +50,22 @@ public class PersistenciaDeporteConjunto {
         }
     }
 
+
+    public void guardarDeporteConjunto(Club club, String carpeta) throws IOException, PersistenciaException {
+    try (PrintWriter equipos = new PrintWriter(new FileWriter(carpeta + "/equipos.txt"));
+            PrintWriter composiciones = new PrintWriter(new FileWriter(carpeta + "/composiciones.txt"))) {
+        equipos.println("# nombre;deporte;categoria;cupoMaximo");
+        composiciones.println("# equipo;loginSocio;posicion;numeroCamiseta");
+        for (Equipo e : club.getEquipos()) {
+            equipos.println(e.getNombre() + SEPARADOR + e.getDeporte().getNombre() + SEPARADOR
+                    + e.getCategoria().getNombre() + SEPARADOR + e.getCupoMaximo());
+            for (ComposicionEquipo c : e.getComposicion()) {
+                composiciones.println(e.getNombre() + SEPARADOR + c.getJugador().getLogin() + SEPARADOR
+                        + c.getPosicion() + SEPARADOR + c.getNumeroCamiseta());
+            }
+        }
+    }
+
     private java.util.List<String[]> leer(String ruta) throws IOException {
         java.util.List<String[]> filas = new java.util.ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(ruta))) {
@@ -65,19 +81,4 @@ public class PersistenciaDeporteConjunto {
     }
 }
 
-
-public void guardarDeporteConjunto(Club club, String carpeta) throws IOException, PersistenciaException {
-    try (PrintWriter equipos = new PrintWriter(new FileWriter(carpeta + "/equipos.txt"));
-            PrintWriter composiciones = new PrintWriter(new FileWriter(carpeta + "/composiciones.txt"))) {
-        equipos.println("# nombre;deporte;categoria;cupoMaximo");
-        composiciones.println("# equipo;loginSocio;posicion;numeroCamiseta");
-        for (Equipo e : club.getEquipos()) {
-            equipos.println(e.getNombre() + SEPARADOR + e.getDeporte().getNombre() + SEPARADOR
-                    + e.getCategoria().getNombre() + SEPARADOR + e.getCupoMaximo());
-            for (ComposicionEquipo c : e.getComposicion()) {
-                composiciones.println(e.getNombre() + SEPARADOR + c.getJugador().getLogin() + SEPARADOR
-                        + c.getPosicion() + SEPARADOR + c.getNumeroCamiseta());
-            }
-        }
-    }
 }
