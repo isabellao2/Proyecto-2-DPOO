@@ -1,5 +1,5 @@
 # loginEmpleado;dia(LUNES..DOMINGO);hora(HH:mm)
 coach;LUNES;08:00
+coach;MIERCOLES;14:00
 coach2;LUNES;08:00
 fisio;LUNES;08:00
-coach;MIERCOLES;14:00

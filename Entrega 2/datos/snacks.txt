@@ -1,4 +1,3 @@
-# nombre;precio;alergenos separados por ',' (o NINGUNO)
 Brownie;4000.0;gluten,huevo
 Papas;3000.0;NINGUNO
 Maní;3500.0;maní

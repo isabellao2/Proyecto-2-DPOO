@@ -1,5 +1,4 @@
-# nombre;categoria;precio;cantidadDisponible;ubicacion
-Balón;Fútbol;100000.0;5;Tienda Central
+Balón;Fútbol;100000.0;3;Tienda Central
 Raqueta;Tenis;250000.0;3;Tienda Central
 Gorra;Accesorios;40000.0;10;Tienda Central
 Botilito;Accesorios;25000.0;0;Tienda Central

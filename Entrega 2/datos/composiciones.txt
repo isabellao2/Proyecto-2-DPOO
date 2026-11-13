@@ -1,4 +1,4 @@
-# equipo;loginSocio;posicion;numeroCamiseta
+# equipo;login;posicion;camiseta
 Águilas;a1;Delantero;1
 Águilas;a2;Delantero;2
 Águilas;a3;Delantero;3
@@ -13,3 +13,4 @@ Búhos;b4;Defensa;4
 Búhos;b5;Defensa;5
 Búhos;b6;Defensa;6
 Búhos;b7;Defensa;7
+Juveniles;pedro;defensa;2
