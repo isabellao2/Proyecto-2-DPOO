@@ -1,0 +1,8 @@
+# nombre;tipo;modalidad;deporte;categoria;cupos;tarifa;fecha;estado
+Mini Mundialito Mayores;COMPETITIVO;CONJUNTO;Fútbol;Mayores;4;200000.0;2026-12-05;EN_INSCRIPCION
+Copa Recreativa Sub-15;RECREATIVO;CONJUNTO;Fútbol;Sub-15;6;0.0;2026-12-02;EN_INSCRIPCION
+Abierto de Tenis Intermedio;COMPETITIVO;INDIVIDUAL;Tenis;Intermedio;8;50000.0;2026-12-12;EN_INSCRIPCION
+Dobles de Pádel Avanzado;RECREATIVO;DOBLES;Pádel;Avanzado;4;0.0;2026-12-09;EN_INSCRIPCION
+Torneo Tenis de Mesa Intermedio;COMPETITIVO;INDIVIDUAL;Tenis de mesa;Intermedio;4;30000.0;2026-11-13;EN_CURSO
+Ping Pong Abierto;RECREATIVO;INDIVIDUAL;Tenis de mesa;Principiante;4;0.0;2026-10-03;FINALIZADO
+ 
