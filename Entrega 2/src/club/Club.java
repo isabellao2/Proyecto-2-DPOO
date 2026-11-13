@@ -23,6 +23,7 @@ import Usuarios.Entrenador;
 import Usuarios.Fisioterapeuta;
 import Usuarios.Socio;
 import Usuarios.Usuario;
+import Torneos.Torneo;
 
 /**
  * Raíz del modelo del Club Deportivo Séneca.
@@ -43,7 +44,8 @@ public class Club {
     private final Map<String, Equipo> equipos = new LinkedHashMap<>();                   // por nombre
     private final Map<String, Competencia> competencias = new LinkedHashMap<>();         // por nombre
     private final Map<String, DisciplinaIndividual> disciplinas = new LinkedHashMap<>(); // por nombre
-    private final Map<String, Instalacion> instalaciones = new LinkedHashMap<>();        // por nombre
+    private final Map<String, Instalacion> instalaciones = new LinkedHashMap<>();  
+    private final Map<String, Torneo> torneos = new LinkedHashMap<>();      // por nombre
 
     // Colecciones sin identificador natural: se guardan como listas
     private final List<Partido> partidos = new ArrayList<>();
@@ -280,4 +282,18 @@ public class Club {
         }
         return resultado;
     }
+
+        // torneos 
+
+        public void agregarTorneo(Torneo t) {
+            agregarSinRepetir(torneos, t.getNombre(), t, "torneo");
+        }
+    
+        public Torneo buscarTorneo(String nombre) {
+            return torneos.get(nombre);
+        }
+    
+        public Collection<Torneo> getTorneos() {
+            return Collections.unmodifiableCollection(torneos.values());
+        }
 }

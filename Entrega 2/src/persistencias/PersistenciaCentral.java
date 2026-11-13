@@ -16,6 +16,7 @@ public class PersistenciaCentral {
     private final PersistenciaDeporteConjunto deporteConjunto = new PersistenciaDeporteConjunto();
     private final PersistenciaDeporteIndividual deporteIndividual = new PersistenciaDeporteIndividual();
     private final PersistenciaTiendaCafeteria tiendaCafeteria = new PersistenciaTiendaCafeteria();
+    private final PersistenciaTorneos torneos = new PersistenciaTorneos();
 
     public void cargarTodo(Club club, String carpeta) throws IOException, PersistenciaException {
         usuarios.cargarUsuarios(club, carpeta);
@@ -24,6 +25,7 @@ public class PersistenciaCentral {
         deporteIndividual.cargarInstalaciones(club, carpeta);
         tiendaCafeteria.cargarTiendaCafeteria(club, carpeta);
         club.conectarAdministradores(); //cambio
+        torneos.cargarTorneos(club, carpeta);
     }
 
     /** Guarda lo que las consolas pueden modificar: usuarios (puntos), turnos y tienda/cafetería. */
@@ -32,5 +34,6 @@ public class PersistenciaCentral {
         turnos.guardarTurnos(club, carpeta);
         deporteConjunto.guardarDeporteConjunto(club,carpeta);
         tiendaCafeteria.guardarTiendaCafeteria(club, carpeta);
+        torneos.guardarTorneos(club, carpeta);
     }
 }
