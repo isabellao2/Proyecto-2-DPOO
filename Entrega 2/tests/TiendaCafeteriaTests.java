@@ -230,7 +230,7 @@ class TiendaCafeteriaTest {
     }
 
     @Test
-    void siNoEstaEnUnaInstalacionSeLeDespachaCualquierBebida() {
+    void NoEstaEnUnaInstalacionCualquierBebida() {
         assertTrue(cafeteria.puedeDespachar(new Bebida("Café", 4000, true), socio));
         assertTrue(cafeteria.puedeDespachar(new Bebida("Agua", 2000, false), socio));
     }
@@ -248,7 +248,7 @@ class TiendaCafeteriaTest {
     }
     
     @Test
-    void elBonoDaVeintePorCientoYSeConsume() {
+    void BonoDaVeintePorCientoYSeConsume() {
         BonoDescuento bono = new BonoDescuento("Copa", BonoDescuento.PORCENTAJE_DEFECTO);
         socio.agregarBonoDescuento(bono);
         // Pasamos 'bono' y 'LocalDate.now()' en lugar de 'true'
@@ -260,7 +260,7 @@ class TiendaCafeteriaTest {
     }
 
     @Test
-    void elBonoNoSeAcumulaConCodigoNiConPuntosYNoSeGastaEnElIntento() {
+    void BonoNoSeAcumulaConCodigoNiConPuntosYNoSeGastaEnElIntento() {
         BonoDescuento bono = new BonoDescuento(0.2, "Copa");
         socio.agregarBonoDescuento(bono);
         socio.setPuntosFidelidad(100);
@@ -277,7 +277,7 @@ class TiendaCafeteriaTest {
     }
 
     @Test
-    void siLaVentaFallaPorStockElBonoSigueDisponible() {
+    void LaVentaFallaPorStockElBonoSigueDisponible() {
         BonoDescuento bono = new BonoDescuento(0.2, "Copa");
         socio.agregarBonoDescuento(bono);
         assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 99), null, 0, bono, empleados, LocalDate.now()));
