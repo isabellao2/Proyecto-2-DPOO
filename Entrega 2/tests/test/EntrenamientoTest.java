@@ -1,4 +1,4 @@
-package Entrenamiento;
+package test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,6 +16,8 @@ import DeporteConjunto.Categoria;
 import DeporteConjunto.DeporteConjunto;
 import DeporteConjunto.Equipo;
 import DeporteIndividual.Instalacion;
+import Entrenamiento.Asistencia;
+import Entrenamiento.SesionesEntrenamiento;
 import Excepciones.ClubException;
 import Usuarios.Entrenador;
 import Usuarios.Socio;

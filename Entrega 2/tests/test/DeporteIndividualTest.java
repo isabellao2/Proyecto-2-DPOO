@@ -1,4 +1,4 @@
-package DeporteIndividual;
+package test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,6 +11,12 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import DeporteIndividual.DisciplinaIndividual;
+import DeporteIndividual.InscripcionIndividual;
+import DeporteIndividual.Instalacion;
+import DeporteIndividual.PartidoPractica;
+import DeporteIndividual.PuntajeRanking;
+import DeporteIndividual.Reserva;
 import Excepciones.ClubException;
 import Usuarios.Socio;
 
@@ -164,7 +170,7 @@ class DeporteIndividualTest {
     @Test
     void partidoPracticaValidaInscripcionNivelesYRival() {
         LocalDate fecha = LocalDate.of(2026, 11, 20);
-        Socio diego = new Socio("diego", "1234", 20);   // sin inscribir
+        Socio diego = new Socio("diego", "1234", 20);   
 
         assertTrue(new PartidoPractica(tenis, ana, bruno, fecha).puedeJugarse());
         assertThrows(ClubException.class, () -> new PartidoPractica(tenis, ana, carla, fecha));
@@ -176,7 +182,7 @@ class DeporteIndividualTest {
     void resultadoDelPartidoActualizaElRankingUnaSolaVez() {
         PartidoPractica partido = new PartidoPractica(tenis, ana, bruno, LocalDate.of(2026, 11, 20));
 
-        assertThrows(ClubException.class, () -> partido.actualizarRanking(carla)); // no jugó
+        assertThrows(ClubException.class, () -> partido.actualizarRanking(carla)); 
         partido.actualizarRanking(ana);
 
         assertEquals(1015, ana.obtenerRanking(tenis).getElo());
@@ -226,7 +232,7 @@ class DeporteIndividualTest {
         assertThrows(ClubException.class,
                 () -> bruno.reservarInstalacion(t2, hora(10, 0), hora(11, 0), 2, "SENCILLOS"));
 
-        // en otro horario la segunda cancha sí se puede reservar
+ 
         bruno.reservarInstalacion(t2, hora(11, 0), hora(12, 0), 2, "SENCILLOS");
         assertEquals(1, bruno.getReservas().size());
     }
@@ -234,11 +240,11 @@ class DeporteIndividualTest {
     @Test
     void hu06_sinInscripcionHorarioOModalidadInvalidosSeRechaza() {
         assertThrows(ClubException.class,
-                () -> bruno.reservarInstalacion(p1, hora(10, 0), hora(11, 0), 2, "SENCILLOS")); // sin inscribir
+                () -> bruno.reservarInstalacion(p1, hora(10, 0), hora(11, 0), 2, "SENCILLOS")); 
         assertThrows(ClubException.class,
-                () -> ana.reservarInstalacion(t1, hora(11, 0), hora(10, 0), 2, "SENCILLOS"));   // horario
+                () -> ana.reservarInstalacion(t1, hora(11, 0), hora(10, 0), 2, "SENCILLOS"));   
         assertThrows(ClubException.class,
-                () -> ana.reservarInstalacion(t1, hora(10, 0), hora(11, 0), 3, "SENCILLOS"));   // modalidad
+                () -> ana.reservarInstalacion(t1, hora(10, 0), hora(11, 0), 3, "SENCILLOS"));  
         assertTrue(ana.getReservas().isEmpty());
     }
 
@@ -267,7 +273,7 @@ class DeporteIndividualTest {
         ana.reservarInstalacion(t1, hora(10, 0), hora(11, 0), 2, "SENCILLOS");
         assertEquals(1, ana.getReservas().size());
 
-        ana.registrarBebidaCaliente(hora(11, 0));   // más de 30 minutos antes de las 12:00 no, justo 60
+        ana.registrarBebidaCaliente(hora(11, 0));   
         ana.reservarInstalacion(p1, hora(12, 0), hora(13, 0), 2, "SENCILLOS");
         assertEquals(2, ana.getReservas().size());
     }
@@ -295,7 +301,6 @@ class DeporteIndividualTest {
 
     @Test
     void nivelesNoCompatiblesSeRechazaYNoQuedaReserva() {
-        // Falla hasta corregir Socio.programarPartidoPractica (validar antes de reservar)
         assertThrows(ClubException.class,
                 () -> ana.programarPartidoPractica(carla, tenis, t1, hora(10, 0), hora(11, 0)));
 
