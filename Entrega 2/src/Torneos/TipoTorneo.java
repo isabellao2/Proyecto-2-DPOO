@@ -1,5 +1,5 @@
 package Torneos;
 
 public enum TipoTorneo{
-    recreativo, competitivo
+    RECREATIVO, COMPETITIVO
 }

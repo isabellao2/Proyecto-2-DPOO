@@ -48,11 +48,11 @@ public class Torneo {
                 if (fecha == null){
                     throw new ClubException ("Debe indicar la fecha del torneo");
                 }
-                if (tipo == TipoTorneo.competitivo && tarifa <=0){
+                if (tipo == TipoTorneo.COMPETITIVO && tarifa <=0){
                     throw new ClubException ("Al ser competitivo debe tener una tarifa mas alta que 0 ");
                 }
 
-                if (tipo == TipoTorneo.recreativo && valorBono <= 0){
+                if (tipo == TipoTorneo.RECREATIVO && valorBono <= 0){
                     throw new ClubException ("Un torneo recreativo debe tener un bono mayor que 0");
                 }
                 this.nombre = nombre.trim();
@@ -61,12 +61,12 @@ public class Torneo {
                 this.deporte = deporte.trim();
                 this.categoria = categoria.trim();
                 this.cupos = cupos;
-                this.tarifa = (tipo == TipoTorneo.recreativo) ? 0 : tarifa;
+                this.tarifa = (tipo == TipoTorneo.RECREATIVO) ? 0 : tarifa;
                 this.fecha = fecha;
                 this.estado = EstadoTorneo.EN_INSCRIPCION;
                 this.preferencialLiberados = false;
                 this.inscripciones = new ArrayList<>();
-                this.valorBono = (tipo == TipoTorneo.competitivo) ? tarifa * porcentaje_premio : 0;
+                this.valorBono = (tipo == TipoTorneo.RECREATIVO) ? valorBono : 0;
             }
 
             // getters
@@ -198,7 +198,7 @@ public class Torneo {
              }
     // premios del torneo 
             public double calcularPremio () throws ClubException {
-                if (tipo != TipoTorneo.competitivo){
+                if (tipo != TipoTorneo.COMPETITIVO){
                     throw new ClubException (" Los torneos recreativos no tienen un premio monetario, es un bono");
                 }
                 return calcularRecaudo () * porcentaje_premio;
@@ -305,10 +305,10 @@ public class Torneo {
             }
             private TipoCupo asignarCupo(boolean mejorRanking) throws ClubException {
             if (mejorRanking && getCuposPreferencialesLibres() > 0) {
-                return TipoCupo.preferencial;
+                return TipoCupo.PREFERENCIAL;
             }
             if (getCuposRegularesLibres() > 0) {
-                return TipoCupo.regular;
+                return TipoCupo.REGULAR;
             }
             if (getCuposLibres() == 0) {
                 throw new ClubException("El torneo " + nombre + " no tiene cupos disponibles.");
@@ -320,7 +320,7 @@ public class Torneo {
                 if (preferencialLiberados) {
                     return 0;
                 }
-                return Math.max(0, getCuposPreferenciales() - conteoCupos(TipoCupo.preferencial));
+                return Math.max(0, getCuposPreferenciales() - conteoCupos(TipoCupo.PREFERENCIAL));
             }
     // Nuevo para persistencia 
              public void restaurarEstado(EstadoTorneo estadoGuardado) {
@@ -358,33 +358,40 @@ public class Torneo {
 
     // Nuevo método para finalizar el torneo con un ganador específico
     public void finalizarTorneo(Usuario ganadorUsuario, Equipo ganadorEquipo) throws ClubException {
-        if (ganadorUsuario instanceof Usuarios.Socio) {
-                    ((Usuarios.Socio) ganadorUsuario).agregarBonoDescuento(new BonoDescuento(valorBono, nombre));
-                    registrarEncuentro("Ganador recreativo con bono asignado: " + ganadorUsuario.getLogin());
-                }
-        
+        if (estado != EstadoTorneo.EN_CURSO) {
+            throw new ClubException("Solo se puede finalizar un torneo que está en curso.");
+        }
+
         if (modalidad == Modalidad.CONJUNTO) {
             if (ganadorEquipo == null || !estaInscrito(ganadorEquipo)) {
                 throw new ClubException("Debe especificar un equipo ganador válido que esté inscrito en el torneo.");
             }
             this.equipoGanador = ganadorEquipo;
+            registrarEncuentro("Ganador: equipo " + ganadorEquipo.getNombre());
         } else {
             if (ganadorUsuario == null || !estaInscrito(ganadorUsuario)) {
                 throw new ClubException("Debe especificar un participante ganador válido que esté inscrito en el torneo.");
             }
-            
-            // REGLA: Los empleados no reciben premio en efectivo en torneos competitivos
-            if (tipo == TipoTorneo.competitivo && ganadorUsuario instanceof Empleado) {
-                registrarEncuentro("Ganador: " + ganadorUsuario.getLogin() + " (Empleado - Sin premio en efectivo)");
-            } else if (tipo == TipoTorneo.recreativo) {
-                // REGLA: Torneos recreativos premian con un bono de descuento redimible
+
+            if (tipo == TipoTorneo.COMPETITIVO) {
+                // REGLA: los empleados no reciben el premio en efectivo
+                if (ganadorUsuario instanceof Empleado) {
+                    registrarEncuentro("Ganador: " + ganadorUsuario.getLogin() + " (Empleado - Sin premio en efectivo)");
+                } else {
+                    registrarEncuentro("Ganador: " + ganadorUsuario.getLogin() + " (premio en efectivo)");
+                }
+            } else {
+                // REGLA: los torneos recreativos premian con un bono de descuento
                 if (ganadorUsuario instanceof Usuarios.Socio) {
+                    ((Usuarios.Socio) ganadorUsuario).agregarBonoDescuento(new BonoDescuento(valorBono, nombre));
                     registrarEncuentro("Ganador recreativo con bono asignado: " + ganadorUsuario.getLogin());
+                } else {
+                    registrarEncuentro("Ganador: " + ganadorUsuario.getLogin() + " (sin bono)");
                 }
             }
             this.ganador = ganadorUsuario;
         }
-        
+
         estado = EstadoTorneo.FINALIZADO;
     }
     

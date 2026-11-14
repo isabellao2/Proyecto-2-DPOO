@@ -8,10 +8,12 @@ public class ConsolaEmpleado {
 
     private static final String CARPETA_DATOS = "datos";
 
+ 
     public static void main(String[] args) {
         Club club = new Club();
         PersistenciaCentral persistencia = new PersistenciaCentral();
         Entrada entrada = new Entrada();
+        System.out.println("Carpeta de datos: " + new java.io.File("datos").getAbsolutePath());
 
         // Carga de datos
         try {

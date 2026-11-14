@@ -1,7 +1,7 @@
 # nombre;tipo;modalidad;deporte;categoria;cupos;tarifa;fecha;estado;valorBono
-Mini Mundialito Mayores;competitivo;CONJUNTO;Fútbol;Mayores;4;200000.0;2026-12-05;EN_INSCRIPCION;160000.0
-Copa Recreativa Sub-15;recreativo;CONJUNTO;Fútbol;Sub-15;6;0.0;2026-12-02;EN_INSCRIPCION;0.0
-Abierto de Tenis Intermedio;competitivo;INDIVIDUAL;Tenis;Intermedio;8;50000.0;2026-12-12;EN_INSCRIPCION;40000.0
-Dobles de Pádel Avanzado;recreativo;DOBLES;Pádel;Avanzado;4;0.0;2026-12-09;EN_INSCRIPCION;0.0
-Torneo Tenis de Mesa Intermedio;competitivo;INDIVIDUAL;Tenis de mesa;Intermedio;4;30000.0;2026-11-13;EN_CURSO;24000.0
-Ping Pong Abierto;recreativo;INDIVIDUAL;Tenis de mesa;Principiante;4;0.0;2026-10-03;FINALIZADO;0.0
+Mini Mundialito Mayores;COMPETITIVO;CONJUNTO;Fútbol;Mayores;4;200000.0;2026-12-05;EN_INSCRIPCION;0.0
+Copa Recreativa Sub-15;RECREATIVO;CONJUNTO;Fútbol;Sub-15;6;0.0;2026-12-02;EN_INSCRIPCION;30000.0
+Abierto de Tenis Intermedio;COMPETITIVO;INDIVIDUAL;Tenis;Intermedio;8;50000.0;2026-12-12;EN_INSCRIPCION;0.0
+Dobles de Pádel Avanzado;RECREATIVO;DOBLES;Pádel;Avanzado;4;0.0;2026-12-09;EN_INSCRIPCION;30000.0
+Torneo Tenis de Mesa Intermedio;COMPETITIVO;INDIVIDUAL;Tenis de mesa;Intermedio;4;30000.0;2026-11-13;EN_CURSO;0.0
+Ping Pong Abierto;RECREATIVO;INDIVIDUAL;Tenis de mesa;Principiante;4;0.0;2026-10-03;FINALIZADO;20000.0

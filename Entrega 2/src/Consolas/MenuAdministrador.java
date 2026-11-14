@@ -378,9 +378,9 @@ public class MenuAdministrador {
 
         System.out.println("1. Recreativo (gratis, premio: bono)");
         System.out.println("2. Competitivo (con tarifa, premio en efectivo)");
-        TipoTorneo tipo = TipoTorneo.recreativo;
+        TipoTorneo tipo = TipoTorneo.RECREATIVO;
         if (entrada.leerEntero("Tipo: ", 1, 2) == 2) {
-            tipo = TipoTorneo.competitivo;
+            tipo = TipoTorneo.COMPETITIVO;
         }
 
         System.out.println("1. Deporte de conjunto (equipos)");
@@ -429,13 +429,13 @@ public class MenuAdministrador {
 
         int cupos = entrada.leerEntero("Número de cupos (equipos o jugadores): ", 2, 200);
         double tarifa = 0;
-        if (tipo == TipoTorneo.competitivo) {
+        if (tipo == TipoTorneo.COMPETITIVO) {
             tarifa = entrada.leerDecimal("Tarifa de inscripción: ", 1);
         }
         LocalDate fecha = entrada.leerFecha("Fecha del torneo");
 
          double valorBono = 0;
-        if (tipo == TipoTorneo.recreativo) {
+        if (tipo == TipoTorneo.RECREATIVO) {
             valorBono = entrada.leerDecimal("Valor del bono para el ganador ($): ", 1);
         }
         
@@ -535,7 +535,7 @@ public class MenuAdministrador {
         InscripcionTorneo ganador = inscritos.get(eleccion - 1);
         admin.finalizarTorneo(torneo, ganador.getParticipante(), ganador.getEquipo());
         System.out.println("Torneo finalizado. Ganador: " + ganador.getNombre());
-        if (torneo.getTipo() == TipoTorneo.competitivo) {
+        if (torneo.getTipo() == TipoTorneo.COMPETITIVO) {
             System.out.println("Premio en efectivo: $" + torneo.calcularPremio());
         }
     }
