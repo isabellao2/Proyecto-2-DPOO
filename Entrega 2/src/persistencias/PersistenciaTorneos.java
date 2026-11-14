@@ -44,11 +44,19 @@ public class PersistenciaTorneos {
                     if (p.length > 9) {
                         valorBono = Double.parseDouble(p[9].trim());
                     }
-                    Torneo t = new Torneo(p[0], TipoTorneo.valueOf(p[1].trim().toUpperCase()), Modalidad.valueOf(p[2].trim()),
-                            p[3], p[4], Integer.parseInt(p[5].trim()), Double.parseDouble(p[6].trim()),
+                    
+                   
+                    Torneo t = new Torneo(p[0].trim(), 
+                            TipoTorneo.valueOf(p[1].trim().toUpperCase()), 
+                            Modalidad.valueOf(p[2].trim().toUpperCase()), 
+                            p[3].trim(), p[4].trim(), 
+                            Integer.parseInt(p[5].trim()), 
+                            Double.parseDouble(p[6].trim()),
                             LocalDate.parse(p[7].trim()), valorBono);
-                    t.restaurarEstado(EstadoTorneo.valueOf(p[8].trim()));
+                            
+                    t.restaurarEstado(EstadoTorneo.valueOf(p[8].trim().toUpperCase()));
                     club.agregarTorneo(t);
+                    
                 } catch (RuntimeException e) {
                     throw new PersistenciaException("Torneo inválido en la línea \"" + linea + "\": " + e.getMessage());
                 }
