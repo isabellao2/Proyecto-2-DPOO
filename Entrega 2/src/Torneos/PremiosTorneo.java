@@ -1,14 +1,14 @@
 package Torneos;
 
 import Usuarios.Usuario;
-import Torneo.TipoPremio;
-public class PremioTorneo {
+import Torneos.TipoPremio;
+public class PremiosTorneo {
 
     private final Usuario ganador;
     private final TipoPremio tipo;
     private final double valor;
 
-    public PremioTorneo(Usuario ganador, TipoPremio tipo, double valor) {
+    public PremiosTorneo(Usuario ganador, TipoPremio tipo, double valor) {
         this.ganador = ganador;
         this.tipo = tipo;
         this.valor = valor;
