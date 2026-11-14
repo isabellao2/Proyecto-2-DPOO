@@ -1,6 +1,5 @@
 # loginEmpleado;diaActual;horaActual;diaNuevo;horaNuevo (solo solicitudes pendientes)
+coach;MIERCOLES;14:00;JUEVES;14:00
 ecastro;LUNES;08:00;MARTES;09:00
 lmejia;LUNES;08:00;LUNES;09:00
-coach;MIERCOLES;14:00;JUEVES;14:00
 dvargas;MIERCOLES;14:00;JUEVES;15:00
- 

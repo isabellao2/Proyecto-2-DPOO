@@ -1,4 +1,4 @@
-# nombre;deporte;categoria;cupoMaximo
+# nombre;deporte;categoria;cupo
 Águilas;Fútbol;Mayores;12
 Búhos;Fútbol;Mayores;12
 Juveniles;Fútbol;Sub-17;12
@@ -8,4 +8,3 @@ Tigres;Baloncesto;Mayores;10
 Pumas;Baloncesto;Mayores;10
 Delfines;Voleibol;Mayores;12
 Panteras;Voleibol;Sub-15;8
- 
