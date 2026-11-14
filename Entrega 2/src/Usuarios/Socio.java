@@ -147,11 +147,15 @@ public class Socio extends Usuario {
        if (d == null || !d.estaInscrito(this)) {
            throw new ClubException("Primero debes inscribirte en la disciplina para programar una práctica.");
        }
+          if (inicio == null) {
+        throw new ClubException("Indica cuándo quieres jugar la práctica.");
+    }
+        PartidoPractica partido = new PartidoPractica(d, this, rival, inicio.toLocalDate());
         reservarInstalacion(i, inicio, fin, 2, "SENCILLOS");
-       PartidoPractica partido = new PartidoPractica(d, this, rival, inicio.toLocalDate()); // cambio 
-       partidosPractica.add(partido);
-       return partido;
-   }
+        partidosPractica.add(partido);
+            return partido;
+    }
+   
 
    public PuntajeRanking obtenerRanking (DisciplinaIndividual d) throws ClubException {
 	   for (PuntajeRanking r: rankings) {
