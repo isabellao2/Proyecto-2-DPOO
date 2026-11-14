@@ -1,4 +1,4 @@
-package Partidos;
+package test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,7 +16,11 @@ import org.junit.jupiter.api.Test;
 import DeporteConjunto.Categoria;
 import DeporteConjunto.DeporteConjunto;
 import DeporteConjunto.Equipo;
+import Partidos.EstadisticaBaloncesto;
+import Partidos.PartidoInterno;
 import Usuarios.Socio;
+import Partidos.EstadisticaVoleibol;
+import Partidos.EstadisticaFutbol;
 
 class PartidosTest {
 

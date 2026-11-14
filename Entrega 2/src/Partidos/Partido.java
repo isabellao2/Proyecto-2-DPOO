@@ -65,18 +65,20 @@ public abstract class Partido {
     	
     public boolean puedeJugarse(Equipo equipo) {
      /** Restricción de mínimo (7 fútbol, 5 baloncesto, 6 voleibol)  */
-    
-            if (equiposParticipantes == null || equiposParticipantes.isEmpty()) {
+    	if (equiposParticipantes == null || equiposParticipantes.isEmpty()) {
+            return false;
+        }
+        if (equipo != null && !equiposParticipantes.contains(equipo)) {
+            return false;
+        }
+        for (Equipo e : equiposParticipantes) {
+            if (e != null && !e.cumpleMinimoJugadores()) {
                 return false;
             }
-            for (Equipo e : equiposParticipantes) {
-                if (e != null && !e.cumpleMinimoJugadores()) {
-                    return false; 
-                }
-            }
-
-            return true; 
         }
+        return true;}
+   
+        
 
     public void registrarMarcador(int local, int visitante) {
     	/** marcador final de cada partido y sin empate en baloncesto ni voleibol. En voleibol el marcador son sets */
@@ -106,7 +108,7 @@ public abstract class Partido {
             return false;
         }
         
-        String nombreDeporte = this.deporte.getNombre().toLowerCase();
+        String nombreDeporte = DeporteConjunto.normalizar(this.deporte.getNombre());
         
         // Validar según el deporte del partido
         if (nombreDeporte.contains("futbol") && estadistica instanceof EstadisticaFutbol) {
