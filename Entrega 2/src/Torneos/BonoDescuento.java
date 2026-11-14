@@ -2,7 +2,7 @@ package Torneos;
 
 public class BonoDescuento {
 
-    private final double valor;
+	private final double valor;
     private boolean usado;
     private final String origenTorneo;
 

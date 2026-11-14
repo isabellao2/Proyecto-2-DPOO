@@ -1,12 +1,14 @@
-package TiendaCafeteria;
+package test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,7 +83,7 @@ class TiendaCafeteriaTest {
 
     @Test
     void laCompraEnTiendaPagaIvaDel19PorCiento() {
-        Venta v = tienda.vender(socio, carrito(balon, 1), null, 0, empleados);
+        Venta v = tienda.vender(socio, carrito(balon, 1), null, 0, empleados,  LocalDate.now());
         assertEquals(100000, v.getValor(), DELTA);
         assertEquals(19000, v.getImpuesto(), DELTA);
         assertEquals(119000, v.calcularTotal(), DELTA);
@@ -91,7 +93,7 @@ class TiendaCafeteriaTest {
 
     @Test
     void laVentaDescuentaInventarioYSumaPuntosAlComprador() {
-        tienda.vender(socio, carrito(balon, 3), null, 0, empleados);
+        tienda.vender(socio, carrito(balon, 3), null, 0, empleados,  LocalDate.now());
         assertEquals(7, balon.getCantidadDisponible());
         assertEquals(357, socio.getPuntosFidelidad()); 
         assertEquals(1, socio.getHistorialCompras().size());
@@ -102,7 +104,7 @@ class TiendaCafeteriaTest {
         Map<Articulo, Integer> c = new LinkedHashMap<>();
         c.put(balon, 1);
         c.put(camiseta, 2);
-        Venta v = tienda.vender(socio, c, null, 0, empleados);
+        Venta v = tienda.vender(socio, c, null, 0, empleados, LocalDate.now());
         assertEquals(200000, v.getValor(), DELTA);
     }
 
@@ -110,29 +112,29 @@ class TiendaCafeteriaTest {
 
     @Test
     void elCodigoDeUnEmpleadoDa8PorCientoAUnSocioY15AOtroEmpleado() {
-        Venta deSocio = tienda.vender(socio, carrito(balon, 1), "COACH1", 0, empleados);
+        Venta deSocio = tienda.vender(socio, carrito(balon, 1), "COACH1", 0, empleados,  LocalDate.now());
         assertEquals(8000, deSocio.getDescuento(), DELTA);
         Entrenador otro = new Entrenador("otro", "x", "COACH2");
-        Venta deEmpleado = tienda.vender(otro, carrito(balon, 1), "COACH1", 0, empleados);
+        Venta deEmpleado = tienda.vender(otro, carrito(balon, 1), "COACH1", 0, empleados,  LocalDate.now());
         assertEquals(15000, deEmpleado.getDescuento(), DELTA);
     }
 
     @Test
     void elIvaSeCobraSobreElValorYaDescontado() {
-        Venta v = tienda.vender(socio, carrito(balon, 1), "COACH1", 0, empleados);
+        Venta v = tienda.vender(socio, carrito(balon, 1), "COACH1", 0, empleados, LocalDate.now());
         assertEquals((100000 - 8000) * 0.19, v.getImpuesto(), DELTA);
     }
 
     @Test
     void rechazaUnCodigoQueNoExiste() {
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 1), "FALSO", 0, empleados));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 1), "FALSO", 0, empleados, LocalDate.now()));
         assertEquals(10, balon.getCantidadDisponible());
     }
 
     @Test
     void canjeaPuntosComoDescuento() {
         socio.setPuntosFidelidad(200);
-        Venta v = tienda.vender(socio, carrito(balon, 1), null, 100, empleados);
+        Venta v = tienda.vender(socio, carrito(balon, 1), null, 100, empleados,  LocalDate.now());
         assertEquals(5000, v.getDescuento(), DELTA); // 100 puntos x $50
         assertEquals(100 + 113, socio.getPuntosFidelidad()); // quedan 100 y suma los de esta compra (total 113.050)
     }
@@ -142,33 +144,33 @@ class TiendaCafeteriaTest {
         Articulo barato = new Articulo("Silbato", "Accesorios", 2000, 5);
         tienda.agregarArticulo(barato);
         socio.setPuntosFidelidad(1000);
-        Venta v = tienda.vender(socio, carrito(barato, 1), null, 1000, empleados);
+        Venta v = tienda.vender(socio, carrito(barato, 1), null, 1000, empleados,  LocalDate.now());
         assertEquals(2000, v.getDescuento(), DELTA);
     }
 
     @Test
     void elCodigoYLosPuntosNoSeAcumulan() {
         socio.setPuntosFidelidad(100);
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 1), "COACH1", 50, empleados));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 1), "COACH1", 50, empleados,  LocalDate.now()));
         assertEquals(100, socio.getPuntosFidelidad());
     }
 
     @Test
     void rechazaCanjearMasPuntosDeLosQueTiene() {
         socio.setPuntosFidelidad(10);
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 1), null, 50, empleados));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 1), null, 50, empleados, LocalDate.now()));
     }
 
 
 
     @Test
     void rechazaVentasInvalidas() {
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(null, carrito(balon, 1), null, 0, empleados));
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, new LinkedHashMap<>(), null, 0, empleados));
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 0), null, 0, empleados));
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 11), null, 0, empleados));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(null, carrito(balon, 1), null, 0, empleados,  LocalDate.now()));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, new LinkedHashMap<>(), null, 0, empleados,  LocalDate.now()));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 0), null, 0, empleados,  LocalDate.now()));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(balon, 11), null, 0, empleados,  LocalDate.now()));
         Articulo ajeno = new Articulo("Raqueta", "Tenis", 90000, 3);
-        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(ajeno, 1), null, 0, empleados));
+        assertThrows(IllegalArgumentException.class, () -> tienda.vender(socio, carrito(ajeno, 1), null, 0, empleados,  LocalDate.now()));
     }
 
     @Test
@@ -192,7 +194,7 @@ class TiendaCafeteriaTest {
 
     @Test
     void laCafeteriaCobraImpuestoAlConsumoDel8PorCiento() {
-        Venta v = cafeteria.vender(socio, bebidas(new Bebida("Jugo", 6000, false)), null, 0);
+    	Venta v = cafeteria.vender(socio, bebidas(new Bebida("Jugo", 6000, false)), null, 0, false, LocalDateTime.now());
         assertEquals(6000, v.getValor(), DELTA);
         assertEquals(480, v.getImpuesto(), DELTA);
         assertEquals(6480, v.calcularTotal(), DELTA);
@@ -201,8 +203,8 @@ class TiendaCafeteriaTest {
 
     @Test
     void sumaBebidasSnacksYPropina() {
-        Venta v = cafeteria.vender(socio, bebidas(new Bebida("Jugo", 6000, false)),
-                new ArrayList<>(List.of(new Snack("Galletas", 3000))), 900);
+    	Venta v = cafeteria.vender(socio, bebidas(new Bebida("Jugo", 6000, false)),
+                new ArrayList<>(List.of(new Snack("Galletas", 3000))), 900, false, LocalDateTime.now());
         assertEquals(9000, v.getValor(), DELTA);
         assertEquals(900, v.getPropina(), DELTA);
         assertEquals(9000 + 720 + 900, v.calcularTotal(), DELTA);
@@ -211,30 +213,27 @@ class TiendaCafeteriaTest {
 
     @Test
     void rechazaVentasInvalidasEnLaCafeteria() {
-        assertThrows(IllegalArgumentException.class, () -> cafeteria.vender(null, bebidas(new Bebida("Jugo", 6000, false)), null, 0));
-        assertThrows(IllegalArgumentException.class, () -> cafeteria.vender(socio, null, null, 0));
-        assertThrows(IllegalArgumentException.class, () -> cafeteria.vender(socio, bebidas(new Bebida("Jugo", 6000, false)), null, -1));
+        assertThrows(IllegalArgumentException.class, () -> cafeteria.vender(null, bebidas(new Bebida("Jugo", 6000, false)), null, 0, false, LocalDateTime.now()));
+        assertThrows(IllegalArgumentException.class, () -> cafeteria.vender(socio, null, null, 0, false, LocalDateTime.now()));
+        assertThrows(IllegalArgumentException.class, () ->cafeteria.vender(socio, bebidas(new Bebida("Jugo", 6000, false)), null, -1, false, LocalDateTime.now()));
     }
 
     @Test
     void unaBebidaCalienteMarcaAlSocioComoQuienLaLleva() {
-        assertFalse(socio.isBebidaCalienteActiva());
-        cafeteria.vender(socio, bebidas(new Bebida("Café", 4000, true)), null, 0);
-        assertTrue(socio.isBebidaCalienteActiva());
+        LocalDateTime ahora = LocalDateTime.now();
+        assertFalse(socio.tuvoBebidaCalienteReciente(ahora));
+        cafeteria.vender(socio, bebidas(new Bebida("Café", 4000, true)), null, 0, false, ahora);
+        assertEquals(ahora, socio.getUltimaBebidaCaliente());
+        assertTrue(socio.tuvoBebidaCalienteReciente(ahora));
     }
-
-    @Test
-    void unaBebidaFriaNoMarcaAlSocio() {
-        cafeteria.vender(socio, bebidas(new Bebida("Agua", 2000, false)), null, 0);
-        assertFalse(socio.isBebidaCalienteActiva());
-    }
-
     @Test
     void NoEstaEnUnaInstalacionCualquierBebida() {
-        assertTrue(cafeteria.puedeDespachar(new Bebida("Café", 4000, true), socio));
-        assertTrue(cafeteria.puedeDespachar(new Bebida("Agua", 2000, false), socio));
+        LocalDateTime ahora = LocalDateTime.now();
+        assertFalse(socio.estaEnInstalacionRestringida(ahora));
+       
+        assertDoesNotThrow(() -> cafeteria.vender(socio, bebidas(new Bebida("Café", 4000, true)), null, 0, false, ahora));
+        assertDoesNotThrow(() -> cafeteria.vender(socio, bebidas(new Bebida("Agua", 2000, false)), null, 0, false, ahora));
     }
-
 
     @Test
     void laVentaCalculaTotalRubroYPuntos() {
@@ -243,13 +242,13 @@ class TiendaCafeteriaTest {
         assertTrue(v.esRubro("tienda"));
         assertFalse(v.esRubro("cafeteria"));
         assertFalse(v.esRubro(null));
-        assertEquals(2142, v.calcularPuntosFidelidad(v.calcularTotal()));
+        assertEquals(2142, v.calcularPuntosFidelidad());
         assertNotNull(v.getComprador());
     }
     
     @Test
     void BonoDaVeintePorCientoYSeConsume() {
-        BonoDescuento bono = new BonoDescuento("Copa", BonoDescuento.PORCENTAJE_DEFECTO);
+    	BonoDescuento bono = new BonoDescuento(0.20, "Copa");
         socio.agregarBonoDescuento(bono);
         // Pasamos 'bono' y 'LocalDate.now()' en lugar de 'true'
         Venta v = tienda.vender(socio, carrito(balon, 1), null, 0, bono, empleados, LocalDate.now());

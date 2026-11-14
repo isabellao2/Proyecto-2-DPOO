@@ -33,7 +33,7 @@ class TorneoTest {
  
     @BeforeEach
     void preparar() {
-    	competitivo = new Torneo("Copa", TipoTorneo.competitivo, Modalidad.INDIVIDUAL, "Tenis",
+    	competitivo = new Torneo("Copa", TipoTorneo.COMPETITIVO, Modalidad.INDIVIDUAL, "Tenis",
     	        "Intermedio", 5, 110000, LocalDate.of(2026, 11, 23), 0);
         socio1 = new Socio("socio1", "x", 20);
         socio2 = new Socio("socio2", "x", 21);
@@ -49,12 +49,12 @@ class TorneoTest {
     }
     @Test 
     void torneoRecreativoTarifa () {
-    	Torneo r = new Torneo("R", TipoTorneo.recreativo, Modalidad.INDIVIDUAL, "Tenis",
+    	Torneo r = new Torneo("R", TipoTorneo.RECREATIVO, Modalidad.INDIVIDUAL, "Tenis",
     	        "Intermedio", 9999, 0, LocalDate.of(2026, 11, 23), 50000);
     	}
     @Test
     void torneoCompetitivoTarifa () {
-        assertThrows(ClubException.class, () -> new Torneo("T", TipoTorneo.competitivo,
+        assertThrows(ClubException.class, () -> new Torneo("T", TipoTorneo.COMPETITIVO,
                 Modalidad.INDIVIDUAL, "Tenis", "Intermedio", 10, 0, LocalDate.of(2026, 11, 23), 0));
     }
     @Test
@@ -79,11 +79,11 @@ class TorneoTest {
     }
     @Test
     void CupoPreferencialSinEstarRanking() {
-    	Torneo t = new Torneo("P", TipoTorneo.recreativo, Modalidad.INDIVIDUAL, "Tenis", "Avanzado", 2,
+    	Torneo t = new Torneo("P", TipoTorneo.RECREATIVO, Modalidad.INDIVIDUAL, "Tenis", "Avanzado", 2,
     	        0, LocalDate.of(2026, 11, 23), 50000);
         t.inscribirElJugador(socio1, null, false);
         assertThrows(ClubException.class, () -> t.inscribirElJugador(socio2, null, false));
-        assertEquals(TipoCupo.preferencial, t.inscribirElJugador(socio2, null, true).getTipoCupo());
+        assertEquals(TipoCupo.PREFERENCIAL, t.inscribirElJugador(socio2, null, true).getTipoCupo());
     }
     @Test
     void noSeIniciaConMenosDeDosInscritos() {
@@ -93,7 +93,7 @@ class TorneoTest {
  
     @Test
     void dobleDebeTenerCompaniero() {
-    	Torneo dobles = new Torneo("D", TipoTorneo.recreativo, Modalidad.DOBLES, "Tenis", "Avanzado", 4,
+    	Torneo dobles = new Torneo("D", TipoTorneo.RECREATIVO, Modalidad.DOBLES, "Tenis", "Avanzado", 4,
     	        0, LocalDate.of(2026, 11, 23), 50000);
         assertThrows(ClubException.class, () -> dobles.inscribirElJugador(socio1, null, false));
         dobles.inscribirElJugador(socio1, socio2, false);
@@ -110,7 +110,7 @@ class TorneoTest {
     @Test
     void equipoDebeCumplirMinimoDeJugadoresYNoSeRepite() {
         Equipo eq = new Equipo("Águilas", DeporteConjunto.futbol(), Categoria.MAYORES, 12);
-        Torneo conj = new Torneo("Mini", TipoTorneo.recreativo, Modalidad.CONJUNTO, "Fútbol", "Mayores", 7,
+        Torneo conj = new Torneo("Mini", TipoTorneo.RECREATIVO, Modalidad.CONJUNTO, "Fútbol", "Mayores", 7,
                 0, LocalDate.of(2026, 11, 23), 50000);
         assertThrows(ClubException.class, () -> conj.inscripcionEquipos(eq, false));
         for (int i = 1; i <= 7; i++) {
